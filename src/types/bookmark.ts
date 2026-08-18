@@ -1,3 +1,13 @@
+export interface CustomCollection {
+  id: string;
+  name: string;
+  color: string; // e.g. 'amber', 'emerald', 'sky', 'indigo', 'rose', 'purple', 'teal', 'orange', 'fuchsia', 'lime'
+  icon: string; // e.g. 'star', 'briefcase', 'book', 'palette', 'zap', 'flame', etc.
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Bookmark {
   id: string;
   name: string;
@@ -7,13 +17,14 @@ export interface Bookmark {
   customIconBg?: string;
   tags?: string[];
   isFavorite: boolean;
+  collections?: string[]; // Array of CustomCollection IDs
   clickCount?: number;
   lastOpenedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export type ViewFilter = 'all' | 'favorites' | 'recent' | 'tag';
+export type ViewFilter = 'all' | 'favorites' | 'recent' | 'tag' | 'collection';
 
 export interface PopularWebsite {
   name: string;

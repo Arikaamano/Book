@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useBookmarks } from './hooks/useBookmarks';
 import { useTheme } from './hooks/useTheme';
-import { Bookmark } from './types/bookmark';
+import { Bookmark, CustomCollection } from './types/bookmark';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { SearchBar } from './components/SearchBar';
@@ -14,14 +14,22 @@ import { BookmarkGrid } from './components/BookmarkGrid';
 import { AddBookmarkModal } from './components/AddBookmarkModal';
 import { EditBookmarkModal } from './components/EditBookmarkModal';
 import { DeleteConfirmModal } from './components/DeleteConfirmModal';
+import { CollectionModal } from './components/CollectionModal';
 import { WindowsPackagingModal } from './components/WindowsPackagingModal';
 import { ToastContainer } from './components/Toast';
-import { Grid, Heart, Plus, Layers, X } from 'lucide-react';
+import { Heart, Plus, Layers, X, FolderPlus, Settings2 } from 'lucide-react';
+import { openInDefaultBrowser } from './utils/desktopLauncher';
+import { getCollectionColor, renderCollectionIcon } from './utils/collectionUtils';
+import { SEARCH_ENGINES, SearchEngine, fetchTopSearchResult } from './services/webSearchService';
 
 export default function App() {
   const {
     bookmarks,
     favorites,
+    collections,
+    activeCollection,
+    selectedCollectionId,
+    setSelectedCollectionId,
     allTags,
     filteredBookmarks,
     searchQuery,
@@ -36,6 +44,10 @@ export default function App() {
     updateBookmark,
     deleteBookmark,
     toggleFavorite,
+    toggleBookmarkCollection,
+    addCollection,
+    updateCollection,
+    deleteCollection,
     launchWebsite,
     exportData,
     importData,
@@ -46,8 +58,11 @@ export default function App() {
   const { theme, toggleTheme } = useTheme();
 
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [addModalInitialQuery, setAddModalInitialQuery] = useState<string>('');
   const [editingBookmark, setEditingBookmark] = useState<Bookmark | null>(null);
   const [deletingBookmark, setDeletingBookmark] = useState<Bookmark | null>(null);
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState<boolean>(false);
+  const [editingCollection, setEditingCollection] = useState<CustomCollection | null>(null);
   const [isPackagingModalOpen, setIsPackagingModalOpen] = useState<boolean>(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
 
@@ -58,6 +73,7 @@ export default function App() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') {
         e.preventDefault();
+        setAddModalInitialQuery('');
         setIsAddModalOpen(true);
       }
     };
@@ -83,8 +99,106 @@ export default function App() {
   const handleResetHome = () => {
     setActiveFilter('all');
     setSelectedTag(null);
+    setSelectedCollectionId(null);
     setSearchQuery('');
   };
+
+  // Open Create Collection modal
+  const handleOpenCreateCollection = () => {
+    setEditingCollection(null);
+    setIsCollectionModalOpen(true);
+  };
+
+  // Open Edit Collection modal
+  const handleOpenEditCollection = (col: CustomCollection) => {
+    setEditingCollection(col);
+    setIsCollectionModalOpen(true);
+  };
+
+  // Save Collection (Create or Update)
+  const handleSaveCollection = (data: {
+    name: string;
+    color: string;
+    icon: string;
+    description?: string;
+  }) => {
+    if (editingCollection) {
+      return updateCollection(editingCollection.id, data);
+    } else {
+      const res = addCollection(data);
+      if (res.success && res.collection) {
+        // Automatically activate new collection
+        setActiveFilter('collection');
+        setSelectedCollectionId(res.collection.id);
+        setSelectedTag(null);
+      }
+      return res;
+    }
+  };
+
+  // Launch arbitrary URL directly in default browser
+  const handleDirectLaunch = async (url: string) => {
+    const res = await openInDefaultBrowser(url);
+    if (res.success) {
+      showToast('Launching in Browser', `Opening ${url.replace(/^https?:\/\//, '')}`);
+    } else {
+      showToast('Failed to open link', res.message || 'Could not launch URL', 'error');
+    }
+  };
+
+  // When Enter is pressed or Search Web is clicked in main search bar
+  const handleSearchSubmit = (query: string, engine: SearchEngine = 'google') => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+
+    // If exact single bookmark match in filtered list, launch it
+    if (filteredBookmarks.length === 1 && !trimmed.startsWith('http')) {
+      launchWebsite(filteredBookmarks[0]);
+      return;
+    }
+
+    const eng = SEARCH_ENGINES.find((s) => s.id === engine) || SEARCH_ENGINES[0];
+    const searchUrl = eng.urlTemplate(trimmed);
+    
+    // Open search engine in second window / tab
+    window.open(searchUrl, '_blank', 'noopener,noreferrer');
+    showToast(`Searching on ${eng.name}`, `Opened search in new window for "${trimmed}"`);
+  };
+
+  const handleAddWithQuery = (query: string) => {
+    setAddModalInitialQuery(query);
+    setIsAddModalOpen(true);
+  };
+
+  // Instant 1-click Auto-Search and save top URL as bookmark
+  const handleInstantAddTopResult = async (query: string) => {
+    const trimmed = query.trim();
+    if (!trimmed) return;
+
+    try {
+      const topResult = await fetchTopSearchResult(trimmed);
+      const targetName = topResult.title.replace(/\s*\(Google Search\)/i, '');
+      const res = addBookmark({
+        name: targetName,
+        url: topResult.url,
+        customIconBg: topResult.iconBg,
+        tags: topResult.category ? [topResult.category] : undefined,
+        favicon: topResult.favicon,
+        collections: selectedCollectionId ? [selectedCollectionId] : undefined,
+      });
+
+      if (res.success) {
+        showToast('Bookmark Added!', `Auto-saved "${targetName}" (${topResult.url})`);
+        setSearchQuery('');
+      } else {
+        showToast('Note', res.error || 'Failed to add bookmark', 'error');
+      }
+    } catch (err) {
+      showToast('Search Failed', 'Could not retrieve top URL', 'error');
+    }
+  };
+
+  const activeColColor = activeCollection ? getCollectionColor(activeCollection.color) : null;
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#121212] text-black dark:text-white flex flex-col antialiased selection:bg-amber-300 dark:selection:bg-amber-400 selection:text-black transition-colors">
@@ -103,8 +217,12 @@ export default function App() {
         onSelectFilter={(filter) => {
           setActiveFilter(filter);
           setSelectedTag(null);
+          setSelectedCollectionId(null);
         }}
-        onAddNew={() => setIsAddModalOpen(true)}
+        onAddNew={() => {
+          setAddModalInitialQuery('');
+          setIsAddModalOpen(true);
+        }}
         onOpenPackagingModal={() => setIsPackagingModalOpen(true)}
         onToggleMobileMenu={() => setIsMobileDrawerOpen(true)}
         onResetHome={handleResetHome}
@@ -123,10 +241,24 @@ export default function App() {
           }}
           selectedTag={selectedTag}
           onSelectTag={setSelectedTag}
+          collections={collections}
+          selectedCollectionId={selectedCollectionId}
+          onSelectCollection={(id) => {
+            setSelectedCollectionId(id);
+            if (id) {
+              setActiveFilter('collection');
+            }
+          }}
+          onCreateCollection={handleOpenCreateCollection}
+          onEditCollection={handleOpenEditCollection}
+          bookmarks={bookmarks}
           tags={allTags}
           totalCount={bookmarks.length}
           favoritesCount={favorites.length}
-          onAddNew={() => setIsAddModalOpen(true)}
+          onAddNew={() => {
+            setAddModalInitialQuery('');
+            setIsAddModalOpen(true);
+          }}
           onExport={exportData}
           onImportClick={() => fileInputRef.current?.click()}
           onResetDefaults={resetToDefaults}
@@ -148,45 +280,98 @@ export default function App() {
                     <Heart className="w-6 h-6 fill-rose-500 text-rose-500 stroke-[2.5]" />
                     <span>Favorite Websites</span>
                   </span>
+                ) : activeFilter === 'collection' && activeCollection ? (
+                  <span className="flex items-center gap-2">
+                    <span
+                      className={`w-7 h-7 rounded-lg ${activeColColor?.badgeBg} border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_0px_#000]`}
+                    >
+                      {renderCollectionIcon(activeCollection.icon, 'w-4 h-4 text-black stroke-[2.5]')}
+                    </span>
+                    <span>{activeCollection.name}</span>
+                  </span>
+                ) : selectedTag ? (
+                  <span className="flex items-center gap-2">
+                    <Layers className="w-6 h-6 text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />
+                    <span>Category: #{selectedTag}</span>
+                  </span>
                 ) : (
-                  <span>All Bookmarks</span>
+                  <span>All Bookmarks & Launcher</span>
                 )}
               </h2>
               <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-neutral-400 mt-1">
                 {activeFilter === 'favorites'
                   ? 'Your quick-access pinned websites and favorite tools.'
-                  : 'Click any card to launch it instantly in your browser.'}
+                  : activeFilter === 'collection' && activeCollection
+                  ? activeCollection.description || `Custom list with ${filteredBookmarks.length} websites saved.`
+                  : selectedTag
+                  ? `Showing websites filtered under #${selectedTag}`
+                  : 'Search saved apps, discover new websites, or launch web queries instantly.'}
               </p>
             </div>
 
-            {/* Fluid Search Bar */}
+            {/* Fluid Omni Search Bar */}
             <div className="w-full md:w-80 lg:w-96">
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
                 onClear={() => setSearchQuery('')}
+                onSubmit={handleSearchSubmit}
               />
             </div>
           </div>
 
-          {/* Mobile Horizontal Category Chips */}
-          {allTags.length > 0 && (
+          {/* Mobile Horizontal Category & List Chips */}
+          {(allTags.length > 0 || collections.length > 0) && (
             <div className="md:hidden mb-4 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
               <button
-                onClick={() => setSelectedTag(null)}
+                onClick={() => {
+                  setActiveFilter('all');
+                  setSelectedTag(null);
+                  setSelectedCollectionId(null);
+                }}
                 className={`text-xs px-3 py-1.5 rounded-lg font-black whitespace-nowrap border-2 border-black dark:border-white/40 transition-all ${
-                  selectedTag === null
+                  activeFilter === 'all' && selectedTag === null && selectedCollectionId === null
                     ? 'bg-black dark:bg-white text-white dark:text-black shadow-[2px_2px_0px_0px_#4F46E5]'
                     : 'bg-white dark:bg-neutral-800 text-black dark:text-white shadow-[1.5px_1.5px_0px_0px_#000] dark:shadow-[1.5px_1.5px_0px_0px_#FFF]'
                 }`}
               >
                 All
               </button>
+
+              {/* Collections chips */}
+              {collections.map((col) => {
+                const isSelected = activeFilter === 'collection' && selectedCollectionId === col.id;
+                const colColor = getCollectionColor(col.color);
+                return (
+                  <button
+                    key={col.id}
+                    onClick={() => {
+                      setActiveFilter('collection');
+                      setSelectedCollectionId(col.id);
+                      setSelectedTag(null);
+                    }}
+                    className={`text-xs px-2.5 py-1.5 rounded-lg font-black whitespace-nowrap border-2 border-black transition-all flex items-center gap-1 ${
+                      isSelected
+                        ? `${colColor.bgActive} shadow-[2px_2px_0px_0px_#000]`
+                        : 'bg-white dark:bg-neutral-800 text-black dark:text-white shadow-[1.5px_1.5px_0px_0px_#000]'
+                    }`}
+                  >
+                    {renderCollectionIcon(col.icon, 'w-3 h-3 stroke-[2.5]')}
+                    <span>{col.name}</span>
+                  </button>
+                );
+              })}
+
+              {/* Tag chips */}
               {allTags.map((tag) => (
                 <button
                   key={tag}
-                  onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-                  className={`text-xs px-3 py-1.5 rounded-lg font-black whitespace-nowrap border-2 border-black dark:border-white/40 transition-all ${
+                  onClick={() => {
+                    setSelectedTag(selectedTag === tag ? null : tag);
+                    setSelectedCollectionId(null);
+                    setActiveFilter('tag');
+                  }}
+                  className={`text-xs px-2.5 py-1.5 rounded-lg font-black whitespace-nowrap border-2 border-black dark:border-white/40 transition-all ${
                     selectedTag === tag
                       ? 'bg-amber-300 text-black shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF]'
                       : 'bg-white dark:bg-neutral-800 text-black dark:text-white shadow-[1.5px_1.5px_0px_0px_#000] dark:shadow-[1.5px_1.5px_0px_0px_#FFF]'
@@ -221,13 +406,23 @@ export default function App() {
             bookmarks={bookmarks}
             favorites={favorites}
             filteredBookmarks={filteredBookmarks}
+            collections={collections}
+            activeCollection={activeCollection}
             searchQuery={searchQuery}
             activeFilter={activeFilter}
             onLaunch={launchWebsite}
+            onDirectLaunch={handleDirectLaunch}
             onToggleFavorite={toggleFavorite}
+            onToggleCollection={toggleBookmarkCollection}
             onEdit={(bm) => setEditingBookmark(bm)}
+            onEditCollection={handleOpenEditCollection}
             onDeleteRequest={(bm) => setDeletingBookmark(bm)}
-            onAddNew={() => setIsAddModalOpen(true)}
+            onAddNew={() => {
+              setAddModalInitialQuery('');
+              setIsAddModalOpen(true);
+            }}
+            onAddWithQuery={handleAddWithQuery}
+            onInstantAddTopResult={handleInstantAddTopResult}
             onClearSearch={() => setSearchQuery('')}
             onCopyLink={() => showToast('Link copied', 'Website URL copied to clipboard.')}
             onSelectTag={setSelectedTag}
@@ -241,21 +436,22 @@ export default function App() {
           onClick={() => {
             setActiveFilter('all');
             setSelectedTag(null);
+            setSelectedCollectionId(null);
           }}
           className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 transition-all ${
-            activeFilter === 'all' && selectedTag === null
+            activeFilter === 'all' && selectedTag === null && selectedCollectionId === null
               ? 'text-black font-black bg-amber-300 dark:bg-amber-400 border border-black rounded-lg shadow-[1px_1px_0px_0px_#000]'
               : 'text-slate-700 dark:text-neutral-400 font-bold'
           }`}
         >
-          <Grid className="w-5 h-5 stroke-[2.5]" />
-          <span className="text-[10px] mt-0.5">All</span>
+          <span className="text-[10px] mt-0.5 font-black">All</span>
         </button>
 
         <button
           onClick={() => {
             setActiveFilter('favorites');
             setSelectedTag(null);
+            setSelectedCollectionId(null);
           }}
           className={`flex flex-col items-center justify-center rounded-xl px-3 py-1 transition-all ${
             activeFilter === 'favorites'
@@ -263,21 +459,24 @@ export default function App() {
               : 'text-slate-700 dark:text-neutral-400 font-bold'
           }`}
         >
-          <Heart className={`w-5 h-5 stroke-[2.5] ${activeFilter === 'favorites' ? 'fill-white' : ''}`} />
-          <span className="text-[10px] mt-0.5">Favorites</span>
+          <Heart className={`w-4 h-4 stroke-[2.5] ${activeFilter === 'favorites' ? 'fill-white' : ''}`} />
+          <span className="text-[10px] mt-0.5 font-black">Favorites</span>
         </button>
 
         <button
           onClick={() => setIsMobileDrawerOpen(true)}
           className="flex flex-col items-center justify-center rounded-xl px-3 py-1 text-black dark:text-white font-bold active:scale-95"
         >
-          <Layers className="w-5 h-5 stroke-[2.5]" />
-          <span className="text-[10px] mt-0.5">Categories</span>
+          <FolderPlus className="w-4 h-4 stroke-[2.5]" />
+          <span className="text-[10px] mt-0.5 font-black">Lists</span>
         </button>
 
         <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs px-3.5 py-1.5 rounded-xl border-2 border-black dark:border-white/40 shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+          onClick={() => {
+            setAddModalInitialQuery('');
+            setIsAddModalOpen(true);
+          }}
+          className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs px-3.5 py-1.5 rounded-xl border-2 border-black dark:border-white/40 shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>Add</span>
@@ -287,9 +486,15 @@ export default function App() {
       {/* Modals */}
       <AddBookmarkModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setAddModalInitialQuery('');
+        }}
         onAdd={addBookmark}
         existingBookmarks={bookmarks}
+        collections={collections}
+        onCreateCollection={handleOpenCreateCollection}
+        initialSearchQuery={addModalInitialQuery}
       />
 
       <EditBookmarkModal
@@ -298,6 +503,19 @@ export default function App() {
         onClose={() => setEditingBookmark(null)}
         onSave={updateBookmark}
         existingBookmarks={bookmarks}
+        collections={collections}
+        onCreateCollection={handleOpenCreateCollection}
+      />
+
+      <CollectionModal
+        isOpen={isCollectionModalOpen}
+        onClose={() => {
+          setIsCollectionModalOpen(false);
+          setEditingCollection(null);
+        }}
+        onSave={handleSaveCollection}
+        onDelete={deleteCollection}
+        initialCollection={editingCollection}
       />
 
       <DeleteConfirmModal

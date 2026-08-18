@@ -2,8 +2,8 @@ import React from 'react';
 
 /**
  * Built-in High Quality Brand Logos (SVG)
- * Provides instant, guaranteed pixel-perfect icons for popular apps & websites
- * even in offline/sandbox environments where third-party CDNs might fail.
+ * Provides instant, guaranteed pixel-perfect vector icons for popular apps & websites
+ * with zero network latency and 100% offline reliability.
  */
 
 export interface BrandLogoProps {
@@ -12,30 +12,141 @@ export interface BrandLogoProps {
 }
 
 export const BRAND_SVGS: Record<string, (props: BrandLogoProps) => React.ReactElement> = {
-  'github.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#181717] ${className}`}>
-      <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+  // Gmail (mail.google.com)
+  'mail.google.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <path fill="#EA4335" d="M20 18h2V7.5L12 14.2 2 7.5V18h2V9l8 5.5 8-5.5v9z" />
+      <path fill="#4285F4" d="M2 6v1.5l10 6.7 10-6.7V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2z" />
+      <path fill="#34A853" d="M2 18h4v-7.5L2 7.5V18z" />
+      <path fill="#FBBC05" d="M22 18h-4v-7.5l4-3V18z" />
     </svg>
   ),
 
-  'youtube.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#FF0000] ${className}`}>
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+  // Grok / Grock AI (grok.com / x.ai) - Official xAI Grok mark
+  'grok.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className} fill="none">
+      <rect width="24" height="24" rx="5" fill="#000000" />
+      {/* Grok primary heavy slash */}
+      <path d="M5.5 18.5L13.8 5.5H18.5L10.2 18.5H5.5Z" fill="#FFFFFF" />
+      {/* Grok secondary parallel accent */}
+      <path d="M14.2 18.5L18.5 11.8H15.8L12.5 18.5H14.2Z" fill="#FFFFFF" opacity="0.85" />
     </svg>
   ),
 
-  'chatgpt.com': ({ className = "w-8 h-8" }) => (
+  'x.ai': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className} fill="none">
+      <rect width="24" height="24" rx="5" fill="#000000" />
+      <path d="M5.5 18.5L13.8 5.5H18.5L10.2 18.5H5.5Z" fill="#FFFFFF" />
+      <path d="M14.2 18.5L18.5 11.8H15.8L12.5 18.5H14.2Z" fill="#FFFFFF" opacity="0.85" />
+    </svg>
+  ),
+
+  // GitHub - Authentic Octocat with high-contrast badge
+  'github.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className} fill="none">
+      <circle cx="12" cy="12" r="11" fill="#181717" />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M12 4C7.58 4 4 7.58 4 12c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0020 12c0-4.42-3.58-8-8-8z"
+        fill="#FFFFFF"
+      />
+    </svg>
+  ),
+
+  // YouTube
+  'youtube.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="6" fill="#FF0000" />
+      <polygon points="10,7.5 16.5,12 10,16.5" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Figma
+  'figma.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <path fill="#0ACF83" d="M8 24a4 4 0 0 1-4-4 4 4 0 0 1 4-4h4v4a4 4 0 0 1-4 4z" />
+      <path fill="#A259FF" d="M4 12a4 4 0 0 1 4-4h4v8H8a4 4 0 0 1-4-4z" />
+      <path fill="#F24E1E" d="M4 4a4 4 0 0 1 4-4h4v8H8a4 4 0 0 1-4-4z" />
+      <path fill="#FF7262" d="M12 0h4a4 4 0 0 1 4 4 4 4 0 0 1-4 4h-4V0z" />
+      <circle fill="#1ABCFE" cx="16" cy="12" r="4" />
+    </svg>
+  ),
+
+  // Notion
+  'notion.so': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <rect width="24" height="24" rx="5" fill="#000000" />
+      <path
+        d="M6 6.5C6.7 6.4 7 6.4 8.2 6.3L18.5 5.7C18.7 5.7 18.5 5.5 18.4 5.4L17 4.3C16.6 4 16 3.7 15.3 3.8L5.2 4.6C4.8 4.6 4.7 4.8 4.8 4.9L6 6.5ZM6.8 9.2V19.4C6.8 20 7.1 20.2 7.8 20.2L19.2 19.5C19.9 19.5 20.1 19.1 20.1 18.5V8.6C20.1 8 19.9 7.7 19.3 7.7L7.5 8.4C7 8.4 6.8 8.7 6.8 9.2ZM17.3 10.3C17.4 10.6 17.3 10.9 17 10.9L16.4 11V17.2C16 17.4 15.6 17.5 15.2 17.5C14.6 17.5 14.4 17.3 13.9 16.7L10.4 11.3V16.6L11.5 16.9C11.6 17 11.6 17.2 11.5 17.3C11.5 17.4 11.2 17.5 10.9 17.5L8.2 17.6C8.1 17.5 8 17.3 8 17.2L8.6 17V11.2L7.9 11.1C7.8 11.1 7.8 10.9 7.8 10.8C7.8 10.6 8.1 10.5 8.4 10.5L11.4 10.3L15.2 16V10.9L14.3 10.7C14.2 10.7 14.2 10.5 14.2 10.4C14.2 10.2 14.5 10.2 14.8 10.2L17.1 10C17.1 10 17.2 10.2 17.3 10.3Z"
+        fill="#FFFFFF"
+      />
+    </svg>
+  ),
+
+  'notion.site': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <rect width="24" height="24" rx="5" fill="#000000" />
+      <path
+        d="M6 6.5C6.7 6.4 7 6.4 8.2 6.3L18.5 5.7C18.7 5.7 18.5 5.5 18.4 5.4L17 4.3C16.6 4 16 3.7 15.3 3.8L5.2 4.6C4.8 4.6 4.7 4.8 4.8 4.9L6 6.5ZM6.8 9.2V19.4C6.8 20 7.1 20.2 7.8 20.2L19.2 19.5C19.9 19.5 20.1 19.1 20.1 18.5V8.6C20.1 8 19.9 7.7 19.3 7.7L7.5 8.4C7 8.4 6.8 8.7 6.8 9.2ZM17.3 10.3C17.4 10.6 17.3 10.9 17 10.9L16.4 11V17.2C16 17.4 15.6 17.5 15.2 17.5C14.6 17.5 14.4 17.3 13.9 16.7L10.4 11.3V16.6L11.5 16.9C11.6 17 11.6 17.2 11.5 17.3C11.5 17.4 11.2 17.5 10.9 17.5L8.2 17.6C8.1 17.5 8 17.3 8 17.2L8.6 17V11.2L7.9 11.1C7.8 11.1 7.8 10.9 7.8 10.8C7.8 10.6 8.1 10.5 8.4 10.5L11.4 10.3L15.2 16V10.9L14.3 10.7C14.2 10.7 14.2 10.5 14.2 10.4C14.2 10.2 14.5 10.2 14.8 10.2L17.1 10C17.1 10 17.2 10.2 17.3 10.3Z"
+        fill="#FFFFFF"
+      />
+    </svg>
+  ),
+
+  // Canva
+  'canva.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#00C4CC" />
+      <path d="M12 6.5C8.96 6.5 6.5 8.96 6.5 12s2.46 5.5 5.5 5.5c2.34 0 4.35-1.46 5.14-3.5h-2.22c-.61 1.05-1.74 1.75-3.03 1.75-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5c1.29 0 2.42.7 3.03 1.75h2.22C16.35 7.96 14.34 6.5 12 6.5z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Google Drive
+  'drive.google.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <path d="M8.2 16.5L3.6 8.5h6.2l4.6 8H8.2z" fill="#0066DA" />
+      <path d="M15.4 8.5L10.8 16.5h9.6l4.6-8h-9.6z" fill="#00AC47" />
+      <path d="M15.4 8.5L10.8 0.5H6.2l4.6 8h4.6z" fill="#FFBA00" />
+      <path d="M10.8 0.5L6.2 8.5l4.6 8 4.6-8-4.6-8z" fill="#EA4335" opacity="0.8" />
+    </svg>
+  ),
+
+  // Google Docs
+  'docs.google.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="4" fill="#4285F4" />
+      <path d="M6 6h12v2H6V6zm0 4h12v2H6v-2zm0 4h8v2H6v-2z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Google Sheets
+  'sheets.google.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="4" fill="#0F9D58" />
+      <path d="M7 6h10v12H7V6zm2 2v2h6V8H9zm0 3v2h6v-2H9zm0 3v2h6v-2H9z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // ChatGPT
+  'chatgpt.com': ({ className = 'w-8 h-8' }) => (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
       <circle cx="12" cy="12" r="11" fill="#10A37F" />
-      <path d="M12 4.5a3.5 3.5 0 0 1 3.5 3.5v.5h-1a2.5 2.5 0 0 0-2.5-2.5 2.5 2.5 0 0 0-2.5 2.5v.5h-1v-.5A3.5 3.5 0 0 1 12 4.5z" fill="#FFFFFF" />
-      <path d="M6.5 12a3.5 3.5 0 0 1 3.5-3.5h.5v1a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0 2.5 2.5v1h-.5a3.5 3.5 0 0 1-3.5-3.5z" fill="#FFFFFF" />
-      <path d="M12 19.5a3.5 3.5 0 0 1-3.5-3.5v-.5h1a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5v-.5h1v.5a3.5 3.5 0 0 1-3.5 3.5z" fill="#FFFFFF" />
-      <path d="M17.5 12a3.5 3.5 0 0 1-3.5 3.5h-.5v-1a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5v-1h.5a3.5 3.5 0 0 1 3.5 3.5z" fill="#FFFFFF" />
-      <circle cx="12" cy="12" r="2" fill="#FFFFFF" />
+      <circle cx="12" cy="12" r="4.5" stroke="#FFFFFF" strokeWidth="2" />
+      <path d="M12 4.5V7.5M12 16.5V19.5M4.5 12H7.5M16.5 12H19.5" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
     </svg>
   ),
 
-  'google.com': ({ className = "w-8 h-8" }) => (
+  'openai.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#000000" />
+      <circle cx="12" cy="12" r="5" stroke="#FFFFFF" strokeWidth="2" />
+      <path d="M12 4v4M12 16v4M4 12h4M16 12h4" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  ),
+
+  // Google Search & Main
+  'google.com': ({ className = 'w-8 h-8' }) => (
     <svg viewBox="0 0 24 24" className={className}>
       <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z" />
       <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
@@ -44,119 +155,450 @@ export const BRAND_SVGS: Record<string, (props: BrandLogoProps) => React.ReactEl
     </svg>
   ),
 
-  'spotify.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#1DB954] ${className}`}>
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.83-1.73-6.4-2.12-10.6-1.16a.75.75 0 1 1-.34-1.46c4.6-.96 8.54-.53 11.72 1.34a.75.75 0 0 1 .25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.24-1.99-8.18-2.57-12.01-1.41a.94.94 0 0 1-.55-1.8c4.37-1.32 9.8-.68 13.54 1.61a.94.94 0 0 1 .31 1.29zm.13-3.41c-3.88-2.3-10.29-2.52-14-1.39a1.13 1.13 0 1 1-.65-2.17c4.27-1.29 11.34-1.04 15.82 1.62a1.13 1.13 0 1 1-1.17 1.94z"/>
-    </svg>
-  ),
-
-  'reddit.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#FF4500] ${className}`}>
-      <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
-    </svg>
-  ),
-
-  'mail.google.com': ({ className = "w-8 h-8" }) => (
+  // Google Maps
+  'maps.google.com': ({ className = 'w-8 h-8' }) => (
     <svg viewBox="0 0 24 24" className={className}>
-      <path fill="#4285F4" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6z" opacity="0.1"/>
-      <path fill="#EA4335" d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+      <path fill="#4285F4" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+      <circle cx="12" cy="9" r="2.5" fill="#FFFFFF" />
     </svg>
   ),
 
-  'figma.com': ({ className = "w-8 h-8" }) => (
+  // Google Calendar
+  'calendar.google.com': ({ className = 'w-8 h-8' }) => (
     <svg viewBox="0 0 24 24" className={className}>
-      <path fill="#0ACF83" d="M8 24a4 4 0 0 1-4-4 4 4 0 0 1 4-4h4v4a4 4 0 0 1-4 4z"/>
-      <path fill="#A259FF" d="M4 12a4 4 0 0 1 4-4h4v8H8a4 4 0 0 1-4-4z"/>
-      <path fill="#F24E1E" d="M4 4a4 4 0 0 1 4-4h4v8H8a4 4 0 0 1-4-4z"/>
-      <path fill="#FF7262" d="M12 0h4a4 4 0 0 1 4 4 4 4 0 0 1-4 4h-4V0z"/>
-      <circle fill="#1ABCFE" cx="16" cy="12" r="4"/>
+      <rect width="24" height="24" rx="4" fill="#4285F4" />
+      <rect x="4" y="8" width="16" height="12" rx="2" fill="#FFFFFF" />
+      <path d="M8 3v3M16 3v3" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
+      <text x="12" y="17" fill="#4285F4" fontSize="9" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">31</text>
     </svg>
   ),
 
-  'notion.so': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#000000] ${className}`}>
-      <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.093-.373L18.423 2.34c-.56-.42-1.307-.7-2.24-.607L2.965 2.807c-.466.046-.56.28-.373.466l1.867.935zm.933 3.36v12.783c0 .84.42 1.12 1.307 1.073l14.195-.84c.887-.046 1.12-.513 1.12-1.213V6.727c0-.746-.28-1.12-.933-1.073l-14.755.886c-.654.047-.934.374-.934 1.027zm13.12 1.4c.094.42 0 .84-.42.887l-.794.14v7.746c-.513.28-.98.42-1.447.42-.746 0-1.026-.233-1.633-1.026l-4.433-6.72v6.626l1.353.326c.094.047.14.374.047.514-.047.186-.373.233-.746.233l-3.36.187c-.094 0-.187-.28-.14-.42l.746-.186V9.948L7.96 9.808c-.093-.047-.14-.373-.047-.513.047-.187.374-.233.747-.233l3.686-.234 4.76 7.187V9.62l-1.166-.233c-.094-.047-.14-.373-.047-.513.047-.187.373-.234.746-.234l2.847-.186c.047 0 .093.28.047.42z"/>
-    </svg>
-  ),
-
-  'claude.ai': ({ className = "w-8 h-8" }) => (
+  // AI Studio
+  'aistudio.google.com': ({ className = 'w-8 h-8' }) => (
     <svg viewBox="0 0 24 24" className={className}>
-      <circle cx="12" cy="12" r="10" fill="#D97706" />
+      <circle cx="12" cy="12" r="11" fill="#1A73E8" />
+      <path d="M12 4L14.2 9.8L20 12L14.2 14.2L12 20L9.8 14.2L4 12L9.8 9.8L12 4Z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Gemini
+  'gemini.google.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#1A73E8" />
+      <path d="M12 3C12 7.97 7.97 12 3 12C7.97 12 12 16.03 12 21C12 16.03 16.03 12 21 12C16.03 12 12 7.97 12 3Z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Claude
+  'claude.ai': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#D97706" />
       <path d="M12 4.5L14 9.5L19.5 12L14 14.5L12 19.5L10 14.5L4.5 12L10 9.5L12 4.5Z" fill="#FFFFFF" />
     </svg>
   ),
 
-  'twitter.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#000000] ${className}`}>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-    </svg>
-  ),
-  'x.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#000000] ${className}`}>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-    </svg>
-  ),
-
-  'linear.app': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#5E6AD2] ${className}`}>
-      <path d="M2.5 19.5L19.5 2.5C20.3 3.3 21 4.3 21.5 5.5L5.5 21.5C4.3 21 3.3 20.3 2.5 19.5ZM1.5 12C1.5 6.2 6.2 1.5 12 1.5C13.8 1.5 15.5 2 17 2.8L2.8 17C2 15.5 1.5 13.8 1.5 12ZM12 22.5C10.2 22.5 8.5 22 7 21.2L21.2 7C22 8.5 22.5 10.2 22.5 12C22.5 17.8 17.8 22.5 12 22.5Z"/>
-    </svg>
-  ),
-
-  'vercel.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#000000] ${className}`}>
-      <path d="M12 1L24 22H0L12 1Z"/>
-    </svg>
-  ),
-
-  'stackoverflow.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#F48024] ${className}`}>
-      <path d="M18.986 21.865v-6.404h2.134V24H2.87v-8.539h2.13v6.404h13.986zM6.611 17.6l10.1.002-.008-2.125-10.09-.002.002 2.125zm.425-4.57l9.88 2.12.449-2.08-9.88-2.12-.45 2.08zm1.614-4.39l8.94 4.75.99-1.87-8.94-4.75-.99 1.87zm3.434-3.95l7.14 7.2 1.49-1.49-7.14-7.2-1.49 1.49zm5.955-4.69l-1.86 1.01 5.37 8.59 1.86-1.01-5.37-8.59z"/>
-    </svg>
-  ),
-
-  'netflix.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#E50914] ${className}`}>
-      <path d="M5.398 0v24c1.17-.417 2.379-.769 3.602-1.055V0H5.398zm9.6 0v22.945c1.223.286 2.432.638 3.602 1.055V0h-3.602zm-4.799 0h1.2l4.8 23.362c-.99-.247-1.99-.46-3-.637L10.2 0z"/>
-    </svg>
-  ),
-
-  'linkedin.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#0A66C2] ${className}`}>
-      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-    </svg>
-  ),
-
-  'discord.com': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#5865F2] ${className}`}>
-      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.893.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
-    </svg>
-  ),
-
-  'twitch.tv': ({ className = "w-8 h-8" }) => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={`text-[#9146FF] ${className}`}>
-      <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
-    </svg>
-  ),
-
-  'amazon.com': ({ className = "w-8 h-8" }) => (
+  // DeepSeek
+  'deepseek.com': ({ className = 'w-8 h-8' }) => (
     <svg viewBox="0 0 24 24" className={className}>
-      <path fill="#FF9900" d="M13.84 18.06c-3.15 2.32-7.72 3.56-11.66 3.56-4.8 0-8.94-1.72-12.18-4.57-.26-.22-.03-.53.28-.36 3.51 1.99 7.78 3.19 12.17 3.19 3.53 0 7.39-.89 10.9-2.73.53-.28.98.39.49.91z" transform="translate(12,0)"/>
-      <path fill="#000000" d="M13.7 8.5c-.3-.4-.8-.6-1.5-.6-.9 0-1.8.4-2.4 1.1v-1.9H7.6v11h2.2v-5.2c0-1.2.6-2.1 1.8-2.1.8 0 1.2.5 1.2 1.4v5.9h2.2v-6.3c0-1.8-.7-2.8-2.3-2.8z"/>
-      <path fill="#FF9900" d="M19.6 15.6c-.2-.3-.8-.3-1.1-.1-1.3 1-2.9 1.6-4.6 1.6-3.2 0-5.8-1.9-6.8-4.7-.1-.3-.4-.5-.7-.5s-.6.2-.7.5c-1.3 3.6 1.2 7.5 5.2 8.1 3 .5 6.1-.7 8.1-2.8.3-.3.3-.8-.1-1.1z"/>
+      <circle cx="12" cy="12" r="11" fill="#1E40AF" />
+      <path d="M8 8a6 6 0 0 1 8 8M12 6v12M6 12h12" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+
+  // Spotify
+  'spotify.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#1DB954" />
+      <path d="M16.5 16.5c-2.3-1.4-5.3-1.7-8.8-.9-.3.1-.6-.2-.7-.5-.1-.3.2-.6.5-.7 3.8-.9 7.1-.5 9.7 1.1.3.2.4.5.2.8-.2.3-.6.4-.9.2zm1.2-2.7c-2.7-1.7-6.8-2.1-10-.1-.4.2-.9.1-1.1-.3-.2-.4-.1-.9.3-1.1 3.7-2.3 8.2-1.8 11.3.1.4.2.5.7.3 1.1-.2.4-.7.5-1.1.3zm.1-2.8c-3.2-1.9-8.6-2.1-11.7-1.1-.5.2-1-.1-1.2-.6-.2-.5.1-1 .6-1.2 3.6-1.1 9.5-.9 13.2 1.3.4.3.6.8.3 1.3-.3.4-.8.6-1.2.3z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Reddit
+  'reddit.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#FF4500" />
+      <circle cx="9" cy="12.5" r="1.5" fill="#FFFFFF" />
+      <circle cx="15" cy="12.5" r="1.5" fill="#FFFFFF" />
+      <path d="M9.5 16c1.5 1 3.5 1 5 0" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  ),
+
+  // Netflix
+  'netflix.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="5" fill="#000000" />
+      <path d="M6 3v18h3.5V3H6zm8.5 0v18H18V3h-3.5z" fill="#E50914" />
+      <path d="M6 3l12 18h-3.5L6 7V3z" fill="#B81D24" />
+    </svg>
+  ),
+
+  // Bollyflix
+  'bollyflix': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="6" fill="#F59E0B" />
+      <path d="M4 7h16v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7z" fill="#000000" />
+      <path d="M4 7l3-4h3L7 7h3l3-4h3l-3 4h3l3-4h2a2 2 0 0 1 2 2v2H4V7z" fill="#FBBF24" />
+      <polygon points="10,11 16,14.5 10,18" fill="#F59E0B" />
+    </svg>
+  ),
+
+  // Discord
+  'discord.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#5865F2" />
+      <circle cx="9" cy="12" r="1.5" fill="#FFFFFF" />
+      <circle cx="15" cy="12" r="1.5" fill="#FFFFFF" />
+      <path d="M7 16c2.5 1.5 7.5 1.5 10 0" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+
+  // X / Twitter
+  'x.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="5" fill="#000000" />
+      <path d="M18.244 4.25h2.308l-5.227 6.26 6.502 8.24h-4.67l-3.65-4.817-4.18 4.817H6.68l5.53-6.435L6.054 4.25h4.78l3.313 4.431zm-.81 13.02h1.28L9.084 5.526H7.717z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  'twitter.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#1DA1F2" />
+      <path d="M18.244 5.25h2.308l-5.227 6.26 6.502 8.24h-4.67l-3.65-4.817-4.18 4.817H6.68l5.53-6.435L6.054 5.25h4.78l3.313 4.431zm-.81 13.02h1.28L9.084 6.526H7.717z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Slack
+  'slack.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z" fill="#E01E5A" />
+      <path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z" fill="#36C5F0" />
+      <path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.5-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z" fill="#2EB67D" />
+      <path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.5-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.5-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#ECB22E" />
+    </svg>
+  ),
+
+  // Stack Overflow
+  'stackoverflow.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <path fill="#F48024" d="M18.986 21.865v-6.408h2.134V24H2.88v-8.543h2.134v6.408z" />
+      <path fill="#BCBBBB" d="M7.146 16.924l9.536 1.996.417-1.996-9.536-1.996zm1.385-4.521l8.835 4.148.868-1.849-8.835-4.148zm2.664-4.225l7.357 6.452 1.343-1.543-7.357-6.452zm4.722-4.17l5.228 8.28 1.706-1.077-5.228-8.28zM7.146 20.354h9.75v-2.023h-9.75z" />
+    </svg>
+  ),
+
+  // LinkedIn
+  'linkedin.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="4" fill="#0A66C2" />
+      <path d="M6.5 19h-3v-10h3v10zm-1.5-11.3c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 11.3h-3v-5.6c0-3.368-4-3.113-4 0v5.6h-3v-10h3v1.765c1.396-2.586 7-2.777 7 2.476v5.759z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Linear
+  'linear.app': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#5E6AD2" />
+      <path d="M6 18L18 6M6 6l12 12" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" opacity="0.9" />
+    </svg>
+  ),
+
+  // Vercel
+  'vercel.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#000000" />
+      <path d="M12 5L19 17H5L12 5z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Supabase
+  'supabase.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#1C1C1C" />
+      <path d="M13 3L5 13.5H12L11 21L19 10.5H12L13 3Z" fill="#3ECF8E" />
+    </svg>
+  ),
+
+  // HuggingFace
+  'huggingface.co': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#FFD21E" />
+      <circle cx="9" cy="11" r="1.5" fill="#000000" />
+      <circle cx="15" cy="11" r="1.5" fill="#000000" />
+      <path d="M8 15c2 2 6 2 8 0" stroke="#000000" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+
+  // Pinterest
+  'pinterest.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#E60023" />
+      <path d="M12 5c-3.86 0-7 2.8-7 6.25 0 2.24 1.25 4.2 3.12 5.23-.13-.78-.25-1.98.05-2.83l1.17-4.88s-.3-.6-.3-1.48c0-1.39.8-2.43 1.8-2.43.85 0 1.26.64 1.26 1.4 0 .86-.54 2.14-.83 3.33-.23.99.5 1.8 1.48 1.8 1.78 0 3.14-1.87 3.14-4.58 0-2.4-1.72-4.07-4.18-4.07-2.85 0-4.52 2.13-4.52 4.34 0 .86.33 1.78.74 2.28.08.1.09.19.07.29l-.28 1.13c-.04.18-.15.22-.33.13-1.25-.58-2.03-2.4-2.03-3.87 0-3.15 2.29-6.05 6.6-6.05 3.47 0 6.16 2.47 6.16 5.77 0 3.44-2.17 6.22-5.19 6.22-1.01 0-1.97-.53-2.29-1.15l-.62 2.38c-.23.87-.84 1.96-1.24 2.62 1.02.31 2.1.48 3.23.48 5.52 0 10-4.48 10-10S17.52 5 12 5z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Telegram
+  'telegram.org': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#24A1DE" />
+      <path d="M5.5 11.5L18.5 6.5L15.5 18L11.5 14L9 16.5V13.5L16 8.5L8 13.5L5.5 11.5Z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // WhatsApp
+  'whatsapp.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#25D366" />
+      <path d="M12 6C8.7 6 6 8.7 6 12c0 1.2.3 2.3.9 3.2L6 18l3-1c.9.6 1.9.9 3 .9 3.3 0 6-2.7 6-6s-2.7-5.9-6-5.9z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Twitch
+  'twitch.tv': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="5" fill="#9146FF" />
+      <path d="M5 4l-1 3v13h4v3l3-3h3l5-5V4H5zm12 9l-2.5 2.5H11l-2 2v-2H7V6h10v7zm-2-4h-2v4h2V9zm-4 0H9v4h2V9z" fill="#FFFFFF" />
+    </svg>
+  ),
+
+  // Perplexity AI
+  'perplexity.ai': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#20808D" />
+      <path d="M12 4v16M4 12h16M7 7l10 10M17 7L7 17" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  ),
+
+  // Dribbble
+  'dribbble.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#EA4C89" />
+      <path d="M12 4c4.4 0 8 3.6 8 8s-3.6 8-8 8-8-3.6-8-8 3.6-8 8-8zm5.5 4.5c-.8.8-2 1.6-3.8 2.2 1.4 2.5 2.1 4.7 2.3 5.4 1.3-1.4 2-3.3 2-5.4 0-.8-.2-1.5-.5-2.2z" fill="#FFFFFF" opacity="0.9" />
+    </svg>
+  ),
+
+  // Behance
+  'behance.net': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#1769FF" />
+      <text x="12" y="16" fill="#FFFFFF" fontSize="11" fontWeight="900" textAnchor="middle" fontFamily="sans-serif">Bē</text>
+    </svg>
+  ),
+
+  // Amazon
+  'amazon.com': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <rect width="24" height="24" rx="5" fill="#232F3E" />
+      <path d="M16.5 14.5C14.5 16.5 10 17 7.5 15.5c-.3-.2-.1-.6.2-.5 2.2.8 6.2.5 8.2-1.2.3-.3.8-.1.6.7z" fill="#FF9900" />
+      <path d="M17 13.5c.3.5.8.9 1 .9s.2-.4.1-.7c-.2-.4-.6-1-1.1-1.2-.3 0-.3.5 0 1z" fill="#FF9900" />
+    </svg>
+  ),
+
+  // Wikipedia
+  'wikipedia.org': ({ className = 'w-8 h-8' }) => (
+    <svg viewBox="0 0 24 24" className={className}>
+      <circle cx="12" cy="12" r="11" fill="#000000" />
+      <text x="12" y="16.5" fill="#FFFFFF" fontSize="13" fontWeight="900" textAnchor="middle" fontFamily="serif">W</text>
     </svg>
   ),
 };
 
-export function getBrandSvg(domain: string, className = "w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9"): React.ReactElement | null {
-  if (!domain) return null;
-  const cleanDomain = domain.toLowerCase().replace(/^(https?:\/\/)?(www\.|app\.|m\.)/, '').split('/')[0];
-  
-  if (BRAND_SVGS[cleanDomain]) {
-    return BRAND_SVGS[cleanDomain]({ className });
+/**
+ * Intelligent Brand SVG Matching Engine
+ * Safely parses domain, subdomain, name, and keyword variants (including spaces, typos, etc.)
+ */
+export function getBrandSvg(
+  domainOrHostname: string,
+  className = 'w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9',
+  nameFallback?: string
+): React.ReactElement | null {
+  if (!domainOrHostname && !nameFallback) return null;
+
+  const rawDomain = (domainOrHostname || '').toLowerCase().trim();
+  const rawName = (nameFallback || '').toLowerCase().trim();
+  const clean = rawDomain.replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0].trim();
+
+  // Normalized strings with all spaces, hyphens, and dots removed for robust matching
+  const normClean = clean.replace(/[\s\-_.]/g, '');
+  const normName = rawName.replace(/[\s\-_.]/g, '');
+
+  // 1. Direct key match
+  if (BRAND_SVGS[clean]) {
+    return BRAND_SVGS[clean]({ className });
   }
-  if (BRAND_SVGS[domain.toLowerCase()]) {
-    return BRAND_SVGS[domain.toLowerCase()]({ className });
+  if (BRAND_SVGS[rawDomain]) {
+    return BRAND_SVGS[rawDomain]({ className });
   }
+
+  // 2. Base domain match (e.g. docs.github.com -> github.com)
+  const parts = clean.split('.');
+  if (parts.length >= 2) {
+    const rootDomain = parts.slice(-2).join('.');
+    if (BRAND_SVGS[rootDomain]) {
+      return BRAND_SVGS[rootDomain]({ className });
+    }
+  }
+
+  // 3. GitHub (supports "github", "git hub", "github.com", "gh", "git-hub", "github.io")
+  if (
+    clean.includes('github') ||
+    normClean.includes('github') ||
+    normName.includes('github') ||
+    rawName.includes('git hub') ||
+    rawName === 'gh'
+  ) {
+    return BRAND_SVGS['github.com']({ className });
+  }
+
+  // 4. Grok / Grock AI (supports "grok", "grock", "grok ai", "grock ai", "x.ai", "xai", "grok.com")
+  if (
+    clean.includes('grok') ||
+    clean.includes('x.ai') ||
+    normClean.includes('grok') ||
+    normClean.includes('grock') ||
+    normClean.includes('xai') ||
+    normName.includes('grok') ||
+    normName.includes('grock') ||
+    normName.includes('xai') ||
+    rawName.includes('grok') ||
+    rawName.includes('grock') ||
+    rawName.includes('x.ai')
+  ) {
+    return BRAND_SVGS['grok.com']({ className });
+  }
+
+  // 5. Google services
+  if (clean.includes('mail.google') || rawName === 'gmail' || normName === 'gmail' || rawName.includes('google mail')) {
+    return BRAND_SVGS['mail.google.com']({ className });
+  }
+  if (clean.includes('drive.google') || normName.includes('googledrive') || normName.includes('gdrive')) {
+    return BRAND_SVGS['drive.google.com']({ className });
+  }
+  if (clean.includes('docs.google') || normName.includes('googledocs')) {
+    return BRAND_SVGS['docs.google.com']({ className });
+  }
+  if (clean.includes('sheets.google') || normName.includes('googlesheets')) {
+    return BRAND_SVGS['sheets.google.com']({ className });
+  }
+  if (clean.includes('maps.google') || rawName.includes('google maps')) {
+    return BRAND_SVGS['maps.google.com']({ className });
+  }
+  if (clean.includes('calendar.google') || rawName.includes('google calendar')) {
+    return BRAND_SVGS['calendar.google.com']({ className });
+  }
+  if (clean.includes('aistudio.google') || normName.includes('aistudio')) {
+    return BRAND_SVGS['aistudio.google.com']({ className });
+  }
+  if (clean.includes('gemini.google') || normName.includes('gemini') || rawName.includes('gemini')) {
+    return BRAND_SVGS['gemini.google.com']({ className });
+  }
+  if (clean.includes('google') || normName === 'google') {
+    return BRAND_SVGS['google.com']({ className });
+  }
+
+  // 6. YouTube
+  if (clean.includes('youtube') || normName.includes('youtube') || rawName.includes('you tube')) {
+    return BRAND_SVGS['youtube.com']({ className });
+  }
+
+  // 7. Figma & Canva
+  if (clean.includes('figma') || normName.includes('figma')) {
+    return BRAND_SVGS['figma.com']({ className });
+  }
+  if (clean.includes('canva') || normName.includes('canva')) {
+    return BRAND_SVGS['canva.com']({ className });
+  }
+
+  // 8. Notion
+  if (clean.includes('notion') || normName.includes('notion')) {
+    return BRAND_SVGS['notion.so']({ className });
+  }
+
+  // 9. AI Assistants
+  if (
+    clean.includes('chatgpt') ||
+    clean.includes('openai') ||
+    normClean.includes('chatgpt') ||
+    normName.includes('chatgpt') ||
+    normName.includes('openai') ||
+    rawName.includes('chat gpt')
+  ) {
+    return BRAND_SVGS['chatgpt.com']({ className });
+  }
+  if (clean.includes('claude') || normName.includes('claude') || rawName.includes('anthropic')) {
+    return BRAND_SVGS['claude.ai']({ className });
+  }
+  if (clean.includes('deepseek') || normName.includes('deepseek') || rawName.includes('deep seek')) {
+    return BRAND_SVGS['deepseek.com']({ className });
+  }
+  if (clean.includes('perplexity') || normName.includes('perplexity')) {
+    return BRAND_SVGS['perplexity.ai']({ className });
+  }
+  if (clean.includes('huggingface') || normName.includes('huggingface') || rawName.includes('hugging face')) {
+    return BRAND_SVGS['huggingface.co']({ className });
+  }
+
+  // 10. Developer & Cloud Tools
+  if (clean.includes('supabase') || normName.includes('supabase')) {
+    return BRAND_SVGS['supabase.com']({ className });
+  }
+  if (clean.includes('vercel') || normName.includes('vercel')) {
+    return BRAND_SVGS['vercel.com']({ className });
+  }
+  if (clean.includes('linear') || normName.includes('linear')) {
+    return BRAND_SVGS['linear.app']({ className });
+  }
+  if (clean.includes('stackoverflow') || normName.includes('stackoverflow') || rawName.includes('stack overflow')) {
+    return BRAND_SVGS['stackoverflow.com']({ className });
+  }
+
+  // 11. Media & Social
+  if (clean.includes('spotify') || normName.includes('spotify')) {
+    return BRAND_SVGS['spotify.com']({ className });
+  }
+  if (clean.includes('reddit') || normName.includes('reddit')) {
+    return BRAND_SVGS['reddit.com']({ className });
+  }
+  if (clean.includes('netflix') || normName.includes('netflix')) {
+    return BRAND_SVGS['netflix.com']({ className });
+  }
+  if (clean.includes('discord') || normName.includes('discord')) {
+    return BRAND_SVGS['discord.com']({ className });
+  }
+  if (clean.includes('slack') || normName.includes('slack')) {
+    return BRAND_SVGS['slack.com']({ className });
+  }
+  if (clean.includes('twitter') || clean === 'x.com' || normName === 'twitter' || rawName === 'x') {
+    return BRAND_SVGS['x.com']({ className });
+  }
+  if (clean.includes('linkedin') || normName.includes('linkedin')) {
+    return BRAND_SVGS['linkedin.com']({ className });
+  }
+  if (clean.includes('telegram') || normName.includes('telegram')) {
+    return BRAND_SVGS['telegram.org']({ className });
+  }
+  if (clean.includes('whatsapp') || normName.includes('whatsapp')) {
+    return BRAND_SVGS['whatsapp.com']({ className });
+  }
+  if (clean.includes('twitch') || normName.includes('twitch')) {
+    return BRAND_SVGS['twitch.tv']({ className });
+  }
+  if (clean.includes('pinterest') || normName.includes('pinterest')) {
+    return BRAND_SVGS['pinterest.com']({ className });
+  }
+  if (clean.includes('dribbble') || normName.includes('dribbble')) {
+    return BRAND_SVGS['dribbble.com']({ className });
+  }
+  if (clean.includes('behance') || normName.includes('behance')) {
+    return BRAND_SVGS['behance.net']({ className });
+  }
+  if (clean.includes('amazon') || normName.includes('amazon')) {
+    return BRAND_SVGS['amazon.com']({ className });
+  }
+  if (clean.includes('wikipedia') || normName.includes('wikipedia')) {
+    return BRAND_SVGS['wikipedia.org']({ className });
+  }
+  if (clean.includes('bollyflix') || clean.includes('bollytone') || normName.includes('bollyflix')) {
+    return BRAND_SVGS['bollyflix']({ className });
+  }
+
   return null;
 }

@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { X, Globe, Tag, Heart, Save, AlertCircle } from 'lucide-react';
-import { Bookmark } from '../types/bookmark';
+import React, { useState, useEffect, useMemo } from 'react';
+import { X, Globe, Tag, Heart, Save, AlertCircle, Check, Plus, FolderPlus, Sparkles, ExternalLink } from 'lucide-react';
+import { Bookmark, CustomCollection } from '../types/bookmark';
 import { extractDomain, isValidUrl } from '../utils/urlUtils';
-import { getFaviconUrl, getInitialColor, getInitials } from '../utils/faviconUtils';
-import { getBrandSvg } from '../utils/brandIcons';
+import { getFaviconUrl } from '../utils/faviconUtils';
+import { WebsiteLogo } from './WebsiteLogo';
+import { getCollectionColor, renderCollectionIcon } from '../utils/collectionUtils';
 
 interface EditBookmarkModalProps {
   bookmark: Bookmark | null;
@@ -15,8 +16,12 @@ interface EditBookmarkModalProps {
     customIconBg?: string;
     tags?: string[];
     isFavorite?: boolean;
+    favicon?: string;
+    collections?: string[];
   }) => { success: boolean; error?: string };
   existingBookmarks: Bookmark[];
+  collections?: CustomCollection[];
+  onCreateCollection?: () => void;
 }
 
 export const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
@@ -24,20 +29,35 @@ export const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  existingBookmarks: _existingBookmarks,
+  existingBookmarks,
+  collections = [],
+  onCreateCollection,
 }) => {
   const [name, setName] = useState<string>('');
   const [url, setUrl] = useState<string>('');
   const [tagInput, setTagInput] = useState<string>('');
   const [tags, setTags] = useState<string[]>([]);
+  const [selectedCollections, setSelectedCollections] = useState<string[]>([]);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Collect all existing tags across all bookmarks
+  const allExistingTags = useMemo(() => {
+    const set = new Set<string>();
+    existingBookmarks.forEach((b) => {
+      b.tags?.forEach((t) => set.add(t));
+    });
+    const defaults = ['AI & Tools', 'Development', 'Science & Math', 'Productivity', 'Media', 'Social', 'Design', 'Learning'];
+    defaults.forEach((d) => set.add(d));
+    return Array.from(set);
+  }, [existingBookmarks]);
 
   useEffect(() => {
     if (bookmark) {
       setName(bookmark.name);
       setUrl(bookmark.url);
       setTags(bookmark.tags || []);
+      setSelectedCollections(bookmark.collections || []);
       setIsFavorite(bookmark.isFavorite);
       setTagInput('');
       setErrorMsg(null);
@@ -57,7 +77,18 @@ export const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
 
   if (!isOpen || !bookmark) return null;
 
-  const handleAddTag = () => {
+  const toggleTag = (tagName: string) => {
+    const clean = tagName.trim().replace(/^#/, '');
+    if (!clean) return;
+    if (tags.includes(clean)) {
+      setTags(tags.filter((t) => t !== clean));
+    } else {
+      setTags([...tags, clean]);
+    }
+  };
+
+  const handleAddTag = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     const clean = tagInput.trim().replace(/^#/, '');
     if (clean && !tags.includes(clean)) {
       setTags([...tags, clean]);
@@ -69,210 +100,321 @@ export const EditBookmarkModal: React.FC<EditBookmarkModalProps> = ({
     setTags(tags.filter((t) => t !== tagToRemove));
   };
 
+  const toggleCollectionSelection = (collectionId: string) => {
+    if (selectedCollections.includes(collectionId)) {
+      setSelectedCollections(selectedCollections.filter((id) => id !== collectionId));
+    } else {
+      setSelectedCollections([...selectedCollections, collectionId]);
+    }
+  };
+
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setErrorMsg(null);
 
-    if (!url.trim()) {
+    let targetUrl = url.trim();
+    if (!targetUrl) {
       setErrorMsg('Please enter a website URL.');
       return;
     }
 
-    if (!isValidUrl(url)) {
+    if (!/^https?:\/\//i.test(targetUrl)) {
+      targetUrl = `https://${targetUrl}`;
+    }
+
+    if (!isValidUrl(targetUrl)) {
       setErrorMsg('Please enter a valid website URL (e.g. https://example.com).');
       return;
     }
 
-    const targetName = name.trim() || extractDomain(url);
+    const domain = extractDomain(targetUrl);
+    const targetName = name.trim() || domain || 'Website';
+    const resolvedFavicon = getFaviconUrl(targetUrl, domain);
 
     const result = onSave(bookmark.id, {
       name: targetName,
-      url,
-      tags,
+      url: targetUrl,
+      customIconBg: bookmark.customIconBg,
+      tags: tags.length > 0 ? tags : undefined,
       isFavorite,
+      favicon: resolvedFavicon,
+      collections: selectedCollections,
     });
 
     if (result.success) {
       onClose();
     } else {
-      setErrorMsg(result.error || 'Failed to update bookmark');
+      setErrorMsg(result.error || 'Failed to update bookmark.');
     }
   };
 
-  const previewDomain = extractDomain(url) || 'example.com';
-  const previewBg = bookmark.customIconBg || getInitialColor(previewDomain || name);
-  const previewInitials = getInitials(name || previewDomain, previewDomain);
-  const previewBrandSvg = getBrandSvg(previewDomain, 'w-6 h-6');
-  const previewFavicon = isValidUrl(url) ? getFaviconUrl(url, previewDomain) : undefined;
+  const previewDomain = extractDomain(url) || bookmark.domain;
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn"
       onClick={onClose}
-      aria-hidden="true"
     >
       <div
-        className="bg-white dark:bg-neutral-900 border-2 border-black dark:border-white/30 rounded-2xl w-full max-w-lg max-h-[90vh] flex flex-col shadow-[8px_8px_0px_0px_#000] dark:shadow-[8px_8px_0px_0px_#FFF] overflow-hidden"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="edit-bookmark-title"
+        className="bg-[#FAF8F5] dark:bg-neutral-900 border-4 border-black dark:border-white w-full max-w-lg rounded-2xl shadow-[8px_8px_0px_0px_#000] dark:shadow-[8px_8px_0px_0px_#FFF] overflow-hidden flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal Header */}
-        <div className="px-5 sm:px-6 py-4 border-b-2 border-black dark:border-white/30 bg-cyan-300 dark:bg-cyan-400 flex items-center justify-between">
-          <h2 id="edit-bookmark-title" className="text-base sm:text-lg font-black text-black">
-            Edit Bookmark
-          </h2>
+        {/* Header */}
+        <div className="p-4 sm:p-5 border-b-3 border-black dark:border-white/40 flex items-center justify-between bg-amber-300 dark:bg-neutral-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-black text-amber-300 dark:bg-white dark:text-black flex items-center justify-center border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_#000]">
+              <Save className="w-5 h-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <h2 className="text-base sm:text-lg font-black text-black dark:text-white leading-tight">
+                Edit Bookmark
+              </h2>
+              <p className="text-xs font-bold text-black/70 dark:text-white/70">
+                Update name, website URL, custom lists & tags
+              </p>
+            </div>
+          </div>
           <button
             onClick={onClose}
             aria-label="Close modal"
-            className="w-8 h-8 rounded-lg bg-white hover:bg-black hover:text-white border-2 border-black flex items-center justify-center text-black shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+            className="w-8 h-8 rounded-xl bg-white dark:bg-neutral-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black text-black dark:text-white border-2 border-black dark:border-white flex items-center justify-center shadow-[2px_2px_0px_0px_#000] transition-colors"
           >
             <X className="w-4 h-4 stroke-[3]" />
           </button>
         </div>
 
-        {/* Modal Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-          <div className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
-            {errorMsg && (
-              <div className="p-3 bg-rose-100 dark:bg-rose-950/80 border-2 border-black dark:border-rose-500 rounded-xl flex items-center gap-2 text-xs font-black text-rose-900 dark:text-rose-200 shadow-[2px_2px_0px_0px_#000]">
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 stroke-[2.5]" />
-                <span>{errorMsg}</span>
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 p-4 sm:p-6 space-y-4">
+          {errorMsg && (
+            <div className="p-3 bg-rose-100 dark:bg-rose-950/60 border-2 border-rose-600 rounded-xl flex items-center gap-2 text-xs font-black text-rose-800 dark:text-rose-200">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {/* Live Preview Box */}
+          <div className="p-3.5 bg-indigo-50/80 dark:bg-neutral-800 border-2 border-black dark:border-white/30 rounded-xl flex items-center justify-between gap-3 shadow-[2px_2px_0px_0px_#000]">
+            <div className="flex items-center gap-3 overflow-hidden min-w-0">
+              <WebsiteLogo
+                domain={previewDomain}
+                url={url || bookmark.url}
+                name={name || bookmark.name}
+                favicon={bookmark.favicon}
+                iconBg={bookmark.customIconBg}
+                size="md"
+              />
+              <div className="truncate min-w-0">
+                <p className="text-xs font-black text-black dark:text-white truncate">
+                  {name || previewDomain || 'Website'}
+                </p>
+                <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-mono truncate block">
+                  {url || bookmark.url}
+                </span>
               </div>
+            </div>
+
+            {isValidUrl(url || bookmark.url) && (
+              <a
+                href={url || bookmark.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 text-xs font-bold bg-white dark:bg-neutral-700 border-2 border-black/40 rounded-lg shrink-0 flex items-center gap-1 hover:bg-slate-100 shadow-[1px_1px_0px_0px_#000]"
+              >
+                <span>Test</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             )}
+          </div>
 
-            <div>
-              <label className="block text-xs font-black text-black dark:text-white mb-1">
-                Website Name
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. GitHub"
-                className="w-full h-9.5 px-3 rounded-xl border-2 border-black dark:border-white/30 bg-white dark:bg-neutral-800 text-xs sm:text-sm font-bold text-black dark:text-white focus:outline-none focus:shadow-[3px_3px_0px_0px_#6366F1] shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF]"
-              />
-            </div>
+          {/* Website Name */}
+          <div>
+            <label className="block text-xs font-black text-black dark:text-white uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Display Name</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g. GitHub"
+              className="w-full px-3.5 py-2.5 text-sm font-bold bg-white dark:bg-neutral-800 border-2 border-black dark:border-white/40 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-400 text-black dark:text-white shadow-[2px_2px_0px_0px_#000]"
+            />
+          </div>
 
-            <div>
-              <label className="block text-xs font-black text-black dark:text-white mb-1 flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />
-                Website URL *
-              </label>
-              <input
-                type="text"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com"
-                required
-                className="w-full h-9.5 px-3 rounded-xl border-2 border-black dark:border-white/30 bg-white dark:bg-neutral-800 text-xs sm:text-sm font-bold text-black dark:text-white focus:outline-none focus:shadow-[3px_3px_0px_0px_#6366F1] shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF]"
-              />
-            </div>
+          {/* Website URL */}
+          <div>
+            <label className="block text-xs font-black text-black dark:text-white uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <Globe className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>Website URL</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://example.com"
+              className="w-full px-3.5 py-2.5 text-sm font-bold bg-white dark:bg-neutral-800 border-2 border-black dark:border-white/40 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-amber-400 text-black dark:text-white shadow-[2px_2px_0px_0px_#000]"
+            />
+          </div>
 
-            <div>
-              <label className="block text-xs font-black text-black dark:text-white mb-1 flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5 stroke-[2.5]" />
-                Categories / Tags
+          {/* Custom Named Lists / Collections Selection */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-black text-black dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                <FolderPlus className="w-3.5 h-3.5 text-amber-500" />
+                <span>Custom Named Lists</span>
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddTag();
-                    }
-                  }}
-                  placeholder="Add tag and press Enter..."
-                  className="flex-1 h-9.5 px-3 rounded-xl border-2 border-black dark:border-white/30 bg-white dark:bg-neutral-800 text-xs sm:text-sm font-bold text-black dark:text-white focus:outline-none focus:shadow-[3px_3px_0px_0px_#6366F1] shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF]"
-                />
+              {onCreateCollection && (
                 <button
                   type="button"
-                  onClick={handleAddTag}
-                  className="px-3.5 h-9.5 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 rounded-xl font-black text-xs border-2 border-black dark:border-white shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+                  onClick={onCreateCollection}
+                  className="text-[11px] font-black text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
                 >
-                  Add Tag
+                  <Plus className="w-3 h-3 stroke-[3]" />
+                  <span>Create New List</span>
                 </button>
-              </div>
-
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center gap-1 text-xs font-black bg-yellow-200 text-black border-2 border-black px-2.5 py-0.5 rounded-lg shadow-[1.5px_1.5px_0px_0px_#000]"
-                    >
-                      #{tag}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(tag)}
-                        className="hover:text-rose-600 ml-1 font-black"
-                        aria-label={`Remove tag ${tag}`}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
               )}
             </div>
 
-            <label className="flex items-center gap-2.5 p-2.5 rounded-xl border-2 border-black dark:border-white/30 bg-rose-50 dark:bg-neutral-800 hover:bg-rose-100 dark:hover:bg-neutral-700 cursor-pointer shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] transition-colors">
-              <input
-                type="checkbox"
-                checked={isFavorite}
-                onChange={(e) => setIsFavorite(e.target.checked)}
-                className="w-4 h-4 rounded text-black border-2 border-black focus:ring-black"
-              />
-              <div className="flex items-center gap-1.5 text-xs font-black text-black dark:text-white">
-                <Heart className={`w-3.5 h-3.5 stroke-[2.5] ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-slate-500 dark:text-neutral-400'}`} />
-                <span>Pin to Favorites</span>
-              </div>
-            </label>
-
-            {/* Quick Preview */}
-            <div className="p-3 bg-amber-50 dark:bg-neutral-800/80 border-2 border-black dark:border-white/30 rounded-xl flex items-center gap-3 shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF]">
-              <div
-                className="w-10 h-10 rounded-xl border-2 border-black flex items-center justify-center shrink-0 shadow-[1.5px_1.5px_0px_0px_#000] overflow-hidden"
-                style={{ backgroundColor: previewBg }}
-              >
-                {previewBrandSvg ? (
-                  previewBrandSvg
-                ) : previewFavicon ? (
-                  <img
-                    src={previewFavicon}
-                    alt="favicon"
-                    className="w-5 h-5 object-contain"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <span className="text-xs font-black text-black">{previewInitials}</span>
-                )}
-              </div>
-              <div className="min-w-0">
-                <div className="font-black text-xs sm:text-sm text-black dark:text-white truncate">{name || 'Website Name'}</div>
-                <div className="text-[11px] font-bold text-slate-500 dark:text-neutral-400 font-mono truncate">{previewDomain}</div>
-              </div>
+            <div className="flex flex-wrap gap-1.5">
+              {collections.map((col) => {
+                const isSelected = selectedCollections.includes(col.id);
+                const colColor = getCollectionColor(col.color);
+                return (
+                  <button
+                    key={col.id}
+                    type="button"
+                    onClick={() => toggleCollectionSelection(col.id)}
+                    className={`text-xs px-2.5 py-1 rounded-lg font-black border-2 transition-all flex items-center gap-1.5 ${
+                      isSelected
+                        ? `${colColor.badgeBg} border-black shadow-[2px_2px_0px_0px_#000] scale-102`
+                        : 'bg-white dark:bg-neutral-800 text-black dark:text-white border-black/40 dark:border-white/30 hover:bg-slate-100 shadow-[1px_1px_0px_0px_#000]'
+                    }`}
+                  >
+                    {renderCollectionIcon(col.icon, 'w-3.5 h-3.5 stroke-[2.5]')}
+                    <span>{col.name}</span>
+                    {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Modal Footer */}
-          <div className="px-5 sm:px-6 py-3.5 border-t-2 border-black dark:border-white/30 bg-slate-50 dark:bg-neutral-800/50 flex items-center justify-end gap-2.5">
+          {/* Tags */}
+          <div>
+            <label className="block text-xs font-black text-black dark:text-white uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <Tag className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300" />
+              <span>Tags</span>
+            </label>
+
+            {/* Selected Tags */}
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {tags.map((t) => (
+                  <span
+                    key={t}
+                    className="inline-flex items-center gap-1 text-xs px-2.5 py-0.5 rounded-lg bg-black text-white dark:bg-white dark:text-black font-black border border-black"
+                  >
+                    <span>#{t}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(t)}
+                      className="hover:text-rose-400 dark:hover:text-rose-600"
+                    >
+                      <X className="w-3 h-3 stroke-[3]" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {/* Tag Input */}
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddTag();
+                  }
+                }}
+                placeholder="Add custom tag (e.g. Design, Work)..."
+                className="flex-1 px-3 py-1.5 text-xs font-bold bg-white dark:bg-neutral-800 border-2 border-black dark:border-white/40 rounded-xl focus:outline-hidden text-black dark:text-white shadow-[1px_1px_0px_0px_#000]"
+              />
+              <button
+                type="button"
+                onClick={() => handleAddTag()}
+                className="px-3 py-1.5 text-xs font-black bg-amber-300 hover:bg-amber-400 text-black border-2 border-black rounded-xl shadow-[1px_1px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
+              >
+                Add
+              </button>
+            </div>
+
+            {/* Tag suggestions */}
+            <div className="flex flex-wrap gap-1">
+              {allExistingTags.slice(0, 10).map((t) => {
+                const isSelected = tags.includes(t);
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => toggleTag(t)}
+                    className={`text-[11px] px-2 py-0.5 rounded-md font-bold border transition-colors ${
+                      isSelected
+                        ? 'bg-black text-white dark:bg-white dark:text-black border-black'
+                        : 'bg-white dark:bg-neutral-800 text-black dark:text-white border-black/30 dark:border-white/30 hover:bg-amber-100'
+                    }`}
+                  >
+                    #{t}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Favorite Toggle */}
+          <div
+            onClick={() => setIsFavorite(!isFavorite)}
+            className={`p-3 rounded-xl border-2 border-black dark:border-white/40 flex items-center justify-between cursor-pointer transition-all ${
+              isFavorite
+                ? 'bg-rose-100 dark:bg-rose-950/60 shadow-[2px_2px_0px_0px_#000]'
+                : 'bg-white dark:bg-neutral-800 hover:bg-slate-50'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Heart
+                className={`w-4 h-4 ${
+                  isFavorite ? 'fill-rose-500 text-rose-500' : 'text-slate-400'
+                }`}
+              />
+              <span className="text-xs font-black text-black dark:text-white">
+                Pin to Favorites Bar
+              </span>
+            </div>
+            <div
+              className={`w-5 h-5 rounded-md border-2 border-black flex items-center justify-center ${
+                isFavorite ? 'bg-rose-500 text-white' : 'bg-white'
+              }`}
+            >
+              {isFavorite && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+            </div>
+          </div>
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-2 pt-2 border-t-2 border-black/10 dark:border-white/10">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border-2 border-black dark:border-white/30 bg-white dark:bg-neutral-800 hover:bg-slate-100 dark:hover:bg-neutral-700 font-black text-xs text-black dark:text-white shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all"
+              className="px-4 py-2 text-xs font-black bg-white dark:bg-neutral-800 hover:bg-slate-100 text-black dark:text-white border-2 border-black dark:border-white/40 rounded-xl shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl font-black text-xs bg-indigo-600 hover:bg-indigo-700 text-white border-2 border-black dark:border-white/40 shadow-[3px_3px_0px_0px_#000] dark:shadow-[3px_3px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none flex items-center gap-1.5 transition-all"
+              className="px-5 py-2 text-xs font-black bg-amber-400 hover:bg-amber-500 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 flex items-center gap-1.5 cursor-pointer"
             >
               <Save className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Save Changes</span>
