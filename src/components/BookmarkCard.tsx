@@ -118,7 +118,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   return (
     <article
       onClick={handleCardClick}
-      className="group relative bg-white dark:bg-neutral-900 border-2 border-black dark:border-white/30 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between cursor-pointer select-none transition-all duration-150 shadow-[3px_3px_0px_0px_#000] dark:shadow-[3px_3px_0px_0px_#FFF] hover:shadow-[5px_5px_0px_0px_#000] dark:hover:shadow-[5px_5px_0px_0px_#FFF] hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none h-[184px] sm:h-[194px]"
+      className="group relative bg-white dark:bg-neutral-900 border-2 border-black dark:border-white/30 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between cursor-pointer select-none transition-all duration-150 shadow-[3px_3px_0px_0px_#000] dark:shadow-[3px_3px_0px_0px_#FFF] hover:shadow-[5px_5px_0px_0px_#000] dark:hover:shadow-[5px_5px_0px_0px_#FFF] hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none h-[196px] sm:h-[204px] w-full min-w-0"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -285,7 +285,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       </div>
 
       {/* Center Website Logo & Identity */}
-      <div className="flex flex-col items-center justify-center my-auto w-full">
+      <div className="flex flex-col items-center justify-center my-auto w-full py-1">
         <WebsiteLogo
           domain={bookmark.domain}
           url={bookmark.url}
@@ -294,11 +294,11 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
           iconBg={bookmark.customIconBg}
           size="lg"
           hoverEffect={true}
-          className="mb-1.5"
+          className="mb-2"
         />
 
         {/* Website Name & Subtitle */}
-        <div className="text-center w-full px-1 max-w-[140px] sm:max-w-[160px]">
+        <div className="text-center w-full px-1">
           <p className="font-black text-xs sm:text-sm text-black dark:text-white truncate tracking-tight leading-tight group-hover:text-indigo-600 dark:group-hover:text-amber-300 transition-colors">
             {bookmark.name}
           </p>
@@ -314,7 +314,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
           {assignedCollections.length > 0 ? (
             <span
               title={`In list: ${assignedCollections[0].name}`}
-              className={`h-5.5 text-[10px] font-black border border-black px-1.5 rounded-md truncate max-w-[90px] sm:max-w-[110px] flex items-center gap-1 shadow-[1px_1px_0px_0px_#000] shrink-0 ${getCollectionColor(assignedCollections[0].color).badgeBg}`}
+              className={`h-5.5 text-[10px] font-black border border-black px-2 rounded-md truncate max-w-[120px] flex items-center gap-1 shadow-[1px_1px_0px_0px_#000] shrink-0 ${getCollectionColor(assignedCollections[0].color).badgeBg}`}
             >
               {renderCollectionIcon(assignedCollections[0].icon, 'w-2.5 h-2.5 shrink-0 stroke-[3]')}
               <span className="truncate">{assignedCollections[0].name}</span>
@@ -324,7 +324,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
               type="button"
               onClick={(e) => handleTagClick(e, bookmark.tags![0])}
               title={`Filter by tag #${bookmark.tags[0]}`}
-              className="h-5.5 text-[10px] font-black text-black bg-amber-200 hover:bg-amber-300 border border-black dark:border-white/40 px-1.5 rounded-md truncate max-w-[90px] sm:max-w-[110px] shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 transition-all text-left flex items-center cursor-pointer shrink-0"
+              className="h-5.5 text-[10px] font-black text-black bg-amber-200 hover:bg-amber-300 border border-black dark:border-white/40 px-2 rounded-md truncate max-w-[120px] shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 transition-all text-left flex items-center cursor-pointer shrink-0"
             >
               #{bookmark.tags[0]}
             </button>
@@ -335,7 +335,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
           )}
         </div>
 
-        <div className="w-5.5 h-5.5 rounded-md bg-slate-100 dark:bg-neutral-800 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-amber-300 dark:group-hover:text-black border border-black dark:border-white/30 flex items-center justify-center text-slate-700 dark:text-neutral-300 shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] transition-colors shrink-0 ml-1">
+        <div className="w-6 h-6 rounded-md bg-slate-100 dark:bg-neutral-800 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-amber-300 dark:group-hover:text-black border border-black dark:border-white/30 flex items-center justify-center text-slate-700 dark:text-neutral-300 shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] transition-colors shrink-0 ml-1">
           <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
         </div>
       </div>

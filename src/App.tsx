@@ -252,7 +252,7 @@ export default function App() {
         onToggleTheme={toggleTheme}
       />
 
-      <div className="flex-1 flex w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex-1 flex w-full px-4 sm:px-6 lg:px-8">
         {/* Sidebar (Desktop docked + Mobile slide-out drawer) */}
         <Sidebar
           activeFilter={activeFilter}
@@ -290,11 +290,11 @@ export default function App() {
           onToggleTheme={toggleTheme}
         />
 
-        {/* Main Content Area - Perfectly aligned with Header */}
-        <main className="flex-1 min-w-0 py-6 md:pl-8 pb-20 md:pb-12">
+        {/* Main Content Area - Full fluid desktop width */}
+        <main className="flex-1 min-w-0 py-6 md:pl-8 lg:pl-10 pb-20 md:pb-12">
           {/* Header & Search Zone */}
-          <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
+          <div className="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+            <div className="shrink-0">
               <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tight">
                 {activeFilter === 'favorites' ? (
                   <span className="flex items-center gap-2">
@@ -316,7 +316,7 @@ export default function App() {
                     <span>Category: #{selectedTag}</span>
                   </span>
                 ) : (
-                  <span>All Bookmarks & Launcher</span>
+                  <span>All Bookmarks &amp; Launcher</span>
                 )}
               </h2>
               <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-neutral-400 mt-1">
@@ -331,7 +331,7 @@ export default function App() {
             </div>
 
             {/* Fluid Omni Search Bar */}
-            <div className="w-full md:w-80 lg:w-96">
+            <div className="w-full lg:max-w-xl xl:max-w-2xl">
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}

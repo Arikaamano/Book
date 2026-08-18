@@ -29,10 +29,10 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleTheme,
 }) => {
   return (
-    <header className="w-full bg-white dark:bg-neutral-900 border-b-2 border-black dark:border-white/30 sticky top-0 z-30 shadow-[0_2px_0px_0px_rgba(0,0,0,0.05)] transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
+    <header className="w-full bg-white dark:bg-neutral-900 border-b-2 border-black dark:border-white/20 sticky top-0 z-30 shadow-[0_2px_0px_0px_rgba(0,0,0,0.05)] transition-colors">
+      <div className="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-6">
         {/* Zone 1: Brand Zone */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           {onToggleMobileMenu && (
             <button
               onClick={onToggleMobileMenu}
@@ -46,10 +46,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Zone 2: Navigation Links */}
-        <nav className="hidden sm:flex items-center gap-2 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl border-2 border-black dark:border-white/30">
+        <nav className="hidden sm:flex items-center gap-2 p-1 bg-slate-100 dark:bg-neutral-800 rounded-xl border-2 border-black dark:border-white/20">
           <button
             onClick={() => onSelectFilter('all')}
-            className={`h-8 px-3.5 rounded-lg font-bold text-xs sm:text-sm transition-all whitespace-nowrap border-2 flex items-center justify-center cursor-pointer ${
+            className={`h-8 px-4 rounded-lg font-black text-xs sm:text-sm transition-all whitespace-nowrap border-2 flex items-center justify-center cursor-pointer ${
               activeFilter === 'all'
                 ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-[2px_2px_0px_0px_#4F46E5]'
                 : 'bg-transparent text-slate-800 dark:text-neutral-300 border-transparent hover:border-black dark:hover:border-white/40 hover:bg-white dark:hover:bg-neutral-700'
@@ -63,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={() => onSelectFilter('favorites')}
-            className={`h-8 px-3.5 rounded-lg font-bold text-xs sm:text-sm transition-all whitespace-nowrap border-2 flex items-center justify-center cursor-pointer ${
+            className={`h-8 px-4 rounded-lg font-black text-xs sm:text-sm transition-all whitespace-nowrap border-2 flex items-center justify-center cursor-pointer ${
               activeFilter === 'favorites'
                 ? 'bg-rose-500 text-white border-black dark:border-white shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF]'
                 : 'bg-transparent text-slate-800 dark:text-neutral-300 border-transparent hover:border-black dark:hover:border-white/40 hover:bg-white dark:hover:bg-neutral-700'
@@ -81,15 +81,15 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </nav>
 
-        {/* Zone 3: Primary Actions - Uniform h-9 alignment */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Zone 3: Primary Actions */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Theme Toggle Button */}
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
 
           {/* Download / Install Desktop App Button */}
           <button
             onClick={onOpenPackagingModal}
-            className="h-9 flex items-center justify-center gap-1.5 text-xs font-black px-3 sm:px-3.5 rounded-xl border-2 border-black dark:border-white/40 bg-cyan-300 hover:bg-cyan-400 text-black shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer whitespace-nowrap"
+            className="h-9 flex items-center justify-center gap-1.5 text-xs font-black px-3.5 sm:px-4 rounded-xl border-2 border-black dark:border-white/40 bg-cyan-300 hover:bg-cyan-400 text-black shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer whitespace-nowrap"
             title="Download or Install Desktop App for Windows & Mac"
           >
             <Download className="w-4 h-4 stroke-[2.5]" />
@@ -100,7 +100,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Add Bookmark Button */}
           <button
             onClick={onAddNew}
-            className="h-9 flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black px-3.5 sm:px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white border-2 border-black dark:border-white/40 shadow-[3px_3px_0px_0px_#000] dark:shadow-[3px_3px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all whitespace-nowrap cursor-pointer"
+            className="h-9 flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black px-4 sm:px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white border-2 border-black dark:border-white/40 shadow-[3px_3px_0px_0px_#000] dark:shadow-[3px_3px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all whitespace-nowrap cursor-pointer"
           >
             <Plus className="w-4 h-4 stroke-[3]" />
             <span className="hidden xs:inline">Add Bookmark</span>

@@ -67,10 +67,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleTheme,
 }) => {
   const renderNavContent = (isDrawer = false) => (
-    <div className="flex flex-col h-full space-y-5 overflow-y-auto no-scrollbar">
+    <div className="flex flex-col h-full space-y-6 overflow-y-auto no-scrollbar">
       {/* Mobile Drawer Header with Logo & Close */}
       {isDrawer && (
-        <div className="flex items-center justify-between pb-3 border-b-2 border-black dark:border-white/30">
+        <div className="flex items-center justify-between pb-3.5 border-b-2 border-black dark:border-white/30">
           <AppLogo size="sm" showText={true} />
           {onCloseMobile && (
             <button
@@ -108,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span>All Bookmarks</span>
             </div>
             <span
-              className={`text-xs px-2 py-0.5 rounded-md font-black border border-black ${
+              className={`text-xs px-2.5 py-0.5 rounded-md font-black border border-black ${
                 activeFilter === 'all' && selectedTag === null && selectedCollectionId === null
                   ? 'bg-white text-black'
                   : 'bg-slate-200 dark:bg-neutral-700 text-black dark:text-white'
@@ -136,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span>Favorites</span>
             </div>
             <span
-              className={`text-xs px-2 py-0.5 rounded-md font-black border border-black ${
+              className={`text-xs px-2.5 py-0.5 rounded-md font-black border border-black ${
                 activeFilter === 'favorites'
                   ? 'bg-white text-black'
                   : 'bg-rose-100 text-rose-800 dark:bg-neutral-700 dark:text-rose-300'
@@ -261,12 +261,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       )}
 
       {/* Data Backup & Desktop Shortcuts */}
-      <div className="pt-2 border-t-2 border-black dark:border-white/20 space-y-2 mt-auto">
+      <div className="pt-3 border-t-2 border-black dark:border-white/20 space-y-2.5 mt-auto">
         <div className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-neutral-400 px-1">
           Data &amp; Backup
         </div>
 
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="grid grid-cols-2 gap-2">
           <button
             onClick={onExport}
             className="p-2 text-xs font-bold bg-white dark:bg-neutral-800 hover:bg-slate-100 dark:hover:bg-neutral-700 text-black dark:text-white rounded-xl border-2 border-black dark:border-white/30 shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#FFF] flex items-center justify-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
@@ -291,10 +291,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onOpenPackagingModal();
             if (onCloseMobile) onCloseMobile();
           }}
-          className="w-full p-2 text-xs font-black bg-cyan-300 hover:bg-cyan-400 text-black rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center justify-center gap-2 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
+          className="w-full p-2.5 text-xs font-black bg-cyan-300 hover:bg-cyan-400 text-black rounded-xl border-2 border-black shadow-[2px_2px_0px_0px_#000] flex items-center justify-center gap-2 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
         >
           <Monitor className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>Download Desktop App</span>
+          <span>Desktop App</span>
         </button>
 
         <div className="flex items-center justify-between px-1 pt-1">
@@ -316,8 +316,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
-      {/* Desktop Sticky In-Flow Sidebar (Never overlaps header!) */}
-      <aside className="w-60 shrink-0 hidden md:block sticky top-20 h-[calc(100vh-6rem)] py-6 pr-6 border-r-2 border-black dark:border-white/20">
+      {/* Desktop In-Flow Sticky Sidebar */}
+      <aside className="w-64 lg:w-72 shrink-0 hidden md:block sticky top-16 h-[calc(100vh-4rem)] py-6 pr-6 lg:pr-8 border-r-2 border-black dark:border-white/20">
         {renderNavContent(false)}
       </aside>
 

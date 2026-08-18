@@ -99,32 +99,32 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
       } finally {
         setIsLoadingSearch(false);
       }
-    }, 300);
+    }, 450);
 
     return () => {
-      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
     };
   }, [searchQuery]);
 
-  // Empty state when no bookmarks exist at all
-  if (bookmarks.length === 0) {
-    return <EmptyState type="no-bookmarks" onAction={onAddNew} />;
-  }
+  const trimmedQuery = searchQuery.trim();
 
-  // Active search query mode
-  if (searchQuery.trim().length > 0) {
-    const trimmedQuery = searchQuery.trim();
-
-    if (filteredBookmarks.length === 0) {
+  // Search Results Mode
+  if (trimmedQuery) {
+    if (filteredBookmarks.length === 0 && liveWebResults.length === 0 && !isLoadingSearch) {
       return (
         <EmptyState
-          type="no-search-results"
-          searchQuery={searchQuery}
+          type="search-empty"
+          query={trimmedQuery}
+          onAction={() => {
+            if (onAddWithQuery) {
+              onAddWithQuery(trimmedQuery);
+            } else {
+              onAddNew();
+            }
+          }}
           onClearSearch={onClearSearch}
-          onAction={onAddNew}
-          onDirectLaunch={onDirectLaunch}
-          onAddWithQuery={onAddWithQuery}
-          onInstantAddTopResult={onInstantAddTopResult}
         />
       );
     }
@@ -140,10 +140,10 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
     };
 
     return (
-      <div className="space-y-5 sm:space-y-6">
+      <div className="space-y-6 sm:space-y-8">
         {/* Saved Bookmarks Search Results */}
         <section>
-          <div className="flex items-center justify-between mb-3.5">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="font-black text-base sm:text-lg tracking-tight flex items-center gap-2 text-black dark:text-white">
               <Search className="w-4 h-4 text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />
               <span>Saved Bookmarks Matching "{trimmedQuery}"</span>
@@ -153,7 +153,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-4.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5">
             {filteredBookmarks.map((bookmark) => (
               <BookmarkCard
                 key={bookmark.id}
@@ -195,18 +195,18 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
               <button
                 type="button"
                 onClick={() => setShowAllWebResults(!showAllWebResults)}
-                className="text-xs font-black text-indigo-600 dark:text-indigo-400 hover:underline"
+                className="text-xs font-black text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
               >
                 {showAllWebResults ? 'Hide Links' : `Show Links (${liveWebResults.length})`}
               </button>
             </div>
 
             {showAllWebResults && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 {liveWebResults.map((res, idx) => (
                   <div
                     key={idx}
-                    className="p-3 bg-slate-50 dark:bg-neutral-800 border-2 border-black dark:border-white/30 rounded-xl flex items-start justify-between gap-2.5 shadow-[2px_2px_0px_0px_#000] hover:bg-amber-50 dark:hover:bg-neutral-750 transition-colors"
+                    className="p-3 bg-slate-50 dark:bg-neutral-800 border-2 border-black dark:border-white/30 rounded-xl flex items-start justify-between gap-3 shadow-[2px_2px_0px_0px_#000] hover:bg-amber-50 dark:hover:bg-neutral-750 transition-colors"
                   >
                     <div className="flex items-start gap-2.5 overflow-hidden min-w-0 flex-1">
                       <WebsiteLogo
@@ -218,46 +218,47 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
                         iconColor={res.iconColor}
                         initials={res.initials}
                         size="sm"
+                        className="shrink-0 mt-0.5"
                       />
-                      <div className="truncate min-w-0 flex-1">
-                        <a
-                          href={res.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title="Open website"
-                          className="group/link text-xs font-black text-indigo-700 dark:text-indigo-300 hover:underline truncate flex items-center gap-1 leading-tight"
-                        >
-                          <span className="truncate">{res.title}</span>
-                          <ExternalLink className="w-3 h-3 shrink-0 opacity-70 group-hover/link:opacity-100" />
-                        </a>
-                        <a
-                          href={res.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[10px] text-emerald-700 dark:text-emerald-400 hover:underline font-mono truncate block mt-0.5"
-                        >
-                          {res.url}
-                        </a>
-                        {res.snippet && (
-                          <p className="text-[10px] text-slate-500 dark:text-neutral-400 line-clamp-2 mt-1 leading-snug">
-                            {res.snippet}
-                          </p>
-                        )}
+                      <div className="overflow-hidden min-w-0 flex-1">
+                        <p className="text-xs font-black text-black dark:text-white truncate">
+                          {res.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500 dark:text-neutral-400 font-mono truncate">
+                          {res.domain}
+                        </p>
+                        <p className="text-[11px] text-slate-600 dark:text-neutral-300 line-clamp-1 mt-0.5">
+                          {res.snippet}
+                        </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1 shrink-0 self-start">
-                      {onInstantAddTopResult && (
-                        <button
-                          type="button"
-                          onClick={() => handleQuickAdd(res.url)}
-                          disabled={isInstantAdding}
-                          className="text-xs px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-lg border border-black shadow-[1px_1px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 flex items-center gap-1 cursor-pointer"
-                        >
-                          <Plus className="w-3 h-3 stroke-[3]" />
-                          <span>Add</span>
-                        </button>
-                      )}
+                    <div className="flex items-center gap-1.5 shrink-0 self-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (onDirectLaunch) {
+                            onDirectLaunch(res.url);
+                          } else {
+                            window.open(res.url, '_blank', 'noopener,noreferrer');
+                          }
+                        }}
+                        className="p-1.5 rounded-lg bg-white dark:bg-neutral-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black border border-black dark:border-white/30 transition-colors cursor-pointer"
+                        title="Open in new tab"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={isInstantAdding}
+                        onClick={() => handleQuickAdd(res.url)}
+                        className="px-2.5 py-1 text-xs font-black bg-amber-300 hover:bg-amber-400 text-black border border-black rounded-lg shadow-[1px_1px_0px_0px_#000] flex items-center gap-1 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
+                        title="Save to your bookmarks"
+                      >
+                        <Plus className="w-3 h-3 stroke-[3]" />
+                        <span>Add</span>
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -284,7 +285,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
     }
 
     return (
-      <div className="space-y-5 sm:space-y-6">
+      <div className="space-y-6 sm:space-y-8">
         {/* Custom List Banner Header */}
         <div
           className={`p-4 sm:p-5 rounded-2xl border-2 border-black ${colColor.bg} flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-[4px_4px_0px_0px_#000]`}
@@ -315,7 +316,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
               <button
                 type="button"
                 onClick={() => onEditCollection(activeCollection)}
-                className="px-3 py-1.5 text-xs font-black bg-white dark:bg-neutral-800 text-black dark:text-white border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_#000] hover:bg-slate-100 dark:hover:bg-neutral-700 flex items-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
+                className="px-3.5 py-2 text-xs font-black bg-white dark:bg-neutral-800 text-black dark:text-white border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_#000] hover:bg-slate-100 dark:hover:bg-neutral-700 flex items-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
               >
                 <Settings2 className="w-3.5 h-3.5" />
                 <span>Edit List</span>
@@ -324,7 +325,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
             <button
               type="button"
               onClick={onAddNew}
-              className="px-3.5 py-1.5 text-xs font-black bg-amber-300 hover:bg-amber-400 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_#000] flex items-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
+              className="px-4 py-2 text-xs font-black bg-amber-300 hover:bg-amber-400 text-black border-2 border-black rounded-xl shadow-[2px_2px_0px_0px_#000] flex items-center gap-1.5 cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
             >
               <Plus className="w-3.5 h-3.5 stroke-[3]" />
               <span>Add Bookmark</span>
@@ -333,7 +334,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
         </div>
 
         {/* Bookmarks Grid in this Custom List */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-4.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5">
           {filteredBookmarks.map((bookmark) => (
             <BookmarkCard
               key={bookmark.id}
@@ -360,7 +361,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
     }
 
     return (
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-6 sm:space-y-8">
         <div className="flex items-center justify-between">
           <h3 className="font-black text-base sm:text-lg tracking-tight flex items-center gap-2 text-black dark:text-white">
             <Heart className="w-5 h-5 fill-rose-500 text-rose-500 stroke-[2.5]" />
@@ -371,7 +372,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-4.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5">
           {favorites.map((bookmark) => (
             <BookmarkCard
               key={bookmark.id}
@@ -391,12 +392,12 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
     );
   }
 
-  // Default Standard View: Favorites on Top, Custom Lists (if any), All Bookmarks below
+  // Default Standard View: Favorites on Top, All Bookmarks below
   return (
-    <div className="space-y-7 sm:space-y-8">
+    <div className="space-y-8 sm:space-y-10">
       {/* 1. Favorites Section */}
       <section>
-        <div className="flex items-center justify-between mb-3.5 sm:mb-4">
+        <div className="flex items-center justify-between mb-4">
           <h3 className="font-black text-base sm:text-lg tracking-tight flex items-center gap-2 text-black dark:text-white">
             <Heart className="w-4 h-4 fill-rose-500 text-rose-500 stroke-[2.5]" />
             <span>Favorites</span>
@@ -409,7 +410,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
         </div>
 
         {favorites.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-4.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5">
             {favorites.map((bookmark) => (
               <BookmarkCard
                 key={`fav-${bookmark.id}`}
@@ -436,7 +437,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
 
       {/* 2. All Bookmarks Section */}
       <section>
-        <div className="flex items-center justify-between mb-3.5 sm:mb-4">
+        <div className="flex items-center justify-between mb-4">
           <h3 className="font-black text-base sm:text-lg tracking-tight flex items-center gap-2 text-black dark:text-white">
             <Grid className="w-4 h-4 text-black dark:text-white" />
             <span>All Bookmarks</span>
@@ -446,7 +447,7 @@ export const BookmarkGrid: React.FC<BookmarkGridProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-4.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5">
           {filteredBookmarks.map((bookmark) => (
             <BookmarkCard
               key={bookmark.id}
