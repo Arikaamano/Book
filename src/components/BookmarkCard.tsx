@@ -1,18 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Bookmark, CustomCollection } from '../types/bookmark';
+import { WebsiteLogo } from './WebsiteLogo';
 import {
   Heart,
   MoreVertical,
   ExternalLink,
-  Copy,
   Edit3,
   Trash2,
+  Copy,
   Check,
-  ArrowUpRight,
   FolderPlus,
-  Layers,
+  ArrowUpRight,
 } from 'lucide-react';
-import { Bookmark, CustomCollection } from '../types/bookmark';
-import { WebsiteLogo } from './WebsiteLogo';
 import { getCollectionColor, renderCollectionIcon } from '../utils/collectionUtils';
 
 interface BookmarkCardProps {
@@ -39,33 +38,29 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   onSelectTag,
 }) => {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  const [copied, setCopied] = useState<boolean>(false);
   const [collectionMenuOpen, setCollectionMenuOpen] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
+
   const menuRef = useRef<HTMLDivElement>(null);
   const colMenuRef = useRef<HTMLDivElement>(null);
 
   // Close menus on click outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setMenuOpen(false);
       }
       if (colMenuRef.current && !colMenuRef.current.contains(event.target as Node)) {
         setCollectionMenuOpen(false);
       }
-    }
-    if (menuOpen || collectionMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [menuOpen, collectionMenuOpen]);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
-  const handleCardClick = () => {
-    if (!menuOpen && !collectionMenuOpen) {
-      onLaunch(bookmark);
-    }
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (menuOpen || collectionMenuOpen) return;
+    onLaunch(bookmark);
   };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
@@ -75,23 +70,25 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
 
   const handleMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCollectionMenuOpen(false);
     setMenuOpen(!menuOpen);
+    setCollectionMenuOpen(false);
   };
 
   const handleColMenuToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setMenuOpen(false);
     setCollectionMenuOpen(!collectionMenuOpen);
+    setMenuOpen(false);
   };
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigator.clipboard.writeText(bookmark.url);
     setCopied(true);
-    setMenuOpen(false);
     if (onCopyLink) onCopyLink(bookmark.url);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => {
+      setCopied(false);
+      setMenuOpen(false);
+    }, 1200);
   };
 
   const handleEditClick = (e: React.MouseEvent) => {
@@ -114,14 +111,14 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   };
 
   // Find collections this bookmark belongs to
-  const assignedCollections = collections.filter(
-    (c) => bookmark.collections && bookmark.collections.includes(c.id)
+  const assignedCollections = collections.filter((c) =>
+    (bookmark.collections || []).includes(c.id)
   );
 
   return (
     <article
       onClick={handleCardClick}
-      className="group relative bg-white dark:bg-neutral-900 border-2 border-black dark:border-white/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-between cursor-pointer select-none transition-all duration-150 shadow-[3px_3px_0px_0px_#000] dark:shadow-[3px_3px_0px_0px_#FFF] hover:shadow-[5px_5px_0px_0px_#000] dark:hover:shadow-[5px_5px_0px_0px_#FFF] hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-1 active:translate-y-1 active:shadow-none min-h-[175px] sm:min-h-[190px]"
+      className="group relative bg-white dark:bg-neutral-900 border-2 border-black dark:border-white/30 rounded-2xl p-3.5 sm:p-4 flex flex-col justify-between cursor-pointer select-none transition-all duration-150 shadow-[3px_3px_0px_0px_#000] dark:shadow-[3px_3px_0px_0px_#FFF] hover:shadow-[5px_5px_0px_0px_#000] dark:hover:shadow-[5px_5px_0px_0px_#FFF] hover:-translate-y-0.5 hover:-translate-x-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none h-[184px] sm:h-[194px]"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -132,14 +129,14 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       }}
       aria-label={`Launch ${bookmark.name} (${bookmark.domain})`}
     >
-      {/* Top Bar inside Card */}
-      <div className="w-full flex items-center justify-between z-20">
+      {/* Top Bar inside Card - Symmetrical Buttons */}
+      <div className="w-full flex items-center justify-between z-20 h-7 shrink-0">
         {/* Left: Options Context Menu */}
         <div className="relative" ref={menuRef}>
           <button
             onClick={handleMenuToggle}
             aria-label={`Options for ${bookmark.name}`}
-            className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-neutral-800 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black border border-black dark:border-white/40 flex items-center justify-center text-black dark:text-white shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:shadow-none transition-all"
+            className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-neutral-800 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black border border-black dark:border-white/40 flex items-center justify-center text-black dark:text-white shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:shadow-none transition-all cursor-pointer"
           >
             <MoreVertical className="w-4 h-4 stroke-[2.5]" />
           </button>
@@ -156,14 +153,14 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
                   setMenuOpen(false);
                   onLaunch(bookmark);
                 }}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-200 dark:hover:bg-neutral-800 text-xs font-bold text-black dark:text-white text-left border-b border-slate-100 dark:border-neutral-800"
+                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-200 dark:hover:bg-neutral-800 text-xs font-bold text-black dark:text-white text-left border-b border-slate-100 dark:border-neutral-800 cursor-pointer"
               >
                 <ExternalLink className="w-4 h-4 text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />
                 <span>Open in Browser</span>
               </button>
               <button
                 onClick={handleCopy}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-200 dark:hover:bg-neutral-800 text-xs font-bold text-black dark:text-white text-left border-b border-slate-100 dark:border-neutral-800"
+                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-200 dark:hover:bg-neutral-800 text-xs font-bold text-black dark:text-white text-left border-b border-slate-100 dark:border-neutral-800 cursor-pointer"
               >
                 {copied ? (
                   <>
@@ -179,14 +176,14 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
               </button>
               <button
                 onClick={handleEditClick}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-200 dark:hover:bg-neutral-800 text-xs font-bold text-black dark:text-white text-left border-b border-slate-100 dark:border-neutral-800"
+                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-amber-200 dark:hover:bg-neutral-800 text-xs font-bold text-black dark:text-white text-left border-b border-slate-100 dark:border-neutral-800 cursor-pointer"
               >
                 <Edit3 className="w-4 h-4 text-slate-600 dark:text-neutral-400" />
-                <span>Edit Details & Lists</span>
+                <span>Edit Details &amp; Lists</span>
               </button>
               <button
                 onClick={handleDeleteClick}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-rose-100 dark:hover:bg-rose-950/60 text-xs font-bold text-rose-600 dark:text-rose-400 text-left"
+                className="w-full flex items-center gap-2.5 px-3.5 py-2 hover:bg-rose-100 dark:hover:bg-rose-950/60 text-xs font-bold text-rose-600 dark:text-rose-400 text-left cursor-pointer"
               >
                 <Trash2 className="w-4 h-4 text-rose-600 dark:text-rose-400 stroke-[2.5]" />
                 <span>Delete</span>
@@ -195,7 +192,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
           )}
         </div>
 
-        {/* Right side actions: Custom Lists Quick-Toggle & Favorite Heart */}
+        {/* Right side actions: Uniform square buttons */}
         <div className="flex items-center gap-1.5">
           {/* Custom Lists Quick Selector Popover */}
           {collections.length > 0 && onToggleCollection && (
@@ -208,19 +205,14 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
                     ? `In lists: ${assignedCollections.map((c) => c.name).join(', ')}`
                     : 'Add to custom lists'
                 }
-                className={`h-7 px-1.5 rounded-lg border border-black dark:border-white/40 flex items-center gap-1 transition-all shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:shadow-none ${
+                className={`w-7 h-7 rounded-lg border border-black dark:border-white/40 flex items-center justify-center transition-all shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:shadow-none cursor-pointer ${
                   assignedCollections.length > 0
                     ? 'bg-amber-300 dark:bg-amber-400 text-black font-black'
-                    : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-300 hover:bg-slate-100'
+                    : 'bg-white dark:bg-neutral-800 text-slate-600 dark:text-neutral-300 hover:bg-slate-100 dark:hover:bg-neutral-700'
                 }`}
               >
                 {assignedCollections.length > 0 ? (
-                  <>
-                    {renderCollectionIcon(assignedCollections[0].icon, 'w-3.5 h-3.5 stroke-[2.5]')}
-                    {assignedCollections.length > 1 && (
-                      <span className="text-[10px] font-black">+{assignedCollections.length - 1}</span>
-                    )}
-                  </>
+                  renderCollectionIcon(assignedCollections[0].icon, 'w-3.5 h-3.5 stroke-[2.5]')
                 ) : (
                   <FolderPlus className="w-3.5 h-3.5 stroke-[2.5]" />
                 )}
@@ -246,7 +238,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
                           e.stopPropagation();
                           onToggleCollection(bookmark.id, col.id);
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-left transition-colors ${
+                        className={`w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-left transition-colors cursor-pointer ${
                           isMember
                             ? `${colColor.bg} text-black dark:text-white font-black`
                             : 'hover:bg-slate-100 dark:hover:bg-neutral-800 text-black dark:text-white'
@@ -277,14 +269,14 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
                 ? `Remove ${bookmark.name} from favorites`
                 : `Add ${bookmark.name} to favorites`
             }
-            className={`w-7 h-7 rounded-lg border border-black dark:border-white/40 flex items-center justify-center transition-all shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:shadow-none ${
+            className={`w-7 h-7 rounded-lg border border-black dark:border-white/40 flex items-center justify-center transition-all shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:shadow-none cursor-pointer ${
               bookmark.isFavorite
                 ? 'text-white bg-rose-500'
                 : 'text-black dark:text-white bg-white dark:bg-neutral-800 hover:bg-rose-100 dark:hover:bg-neutral-700'
             }`}
           >
             <Heart
-              className={`w-4 h-4 stroke-[2.5] ${
+              className={`w-3.5 h-3.5 stroke-[2.5] ${
                 bookmark.isFavorite ? 'fill-white text-white' : 'text-black dark:text-white'
               }`}
             />
@@ -293,7 +285,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       </div>
 
       {/* Center Website Logo & Identity */}
-      <div className="flex flex-col items-center justify-center pt-1 pb-1 w-full my-auto">
+      <div className="flex flex-col items-center justify-center my-auto w-full">
         <WebsiteLogo
           domain={bookmark.domain}
           url={bookmark.url}
@@ -302,7 +294,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
           iconBg={bookmark.customIconBg}
           size="lg"
           hoverEffect={true}
-          className="mb-2"
+          className="mb-1.5"
         />
 
         {/* Website Name & Subtitle */}
@@ -316,13 +308,13 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
         </div>
       </div>
 
-      {/* Card bottom: Collection/Tag badges & Launch indicator */}
-      <div className="w-full flex items-center justify-between pt-2 border-t-2 border-black dark:border-white/30 mt-1">
-        <div className="flex items-center gap-1 overflow-hidden min-w-0">
+      {/* Card bottom: Tag badges & Launch button on exact same baseline */}
+      <div className="w-full flex items-center justify-between pt-2 border-t-2 border-black dark:border-white/30 shrink-0 h-8">
+        <div className="flex items-center gap-1 overflow-hidden min-w-0 flex-1">
           {assignedCollections.length > 0 ? (
             <span
               title={`In list: ${assignedCollections[0].name}`}
-              className={`text-[10px] font-black border border-black px-1.5 py-0.5 rounded-md truncate max-w-[85px] sm:max-w-[100px] flex items-center gap-1 shadow-[1px_1px_0px_0px_#000] ${getCollectionColor(assignedCollections[0].color).badgeBg}`}
+              className={`h-5.5 text-[10px] font-black border border-black px-1.5 rounded-md truncate max-w-[90px] sm:max-w-[110px] flex items-center gap-1 shadow-[1px_1px_0px_0px_#000] shrink-0 ${getCollectionColor(assignedCollections[0].color).badgeBg}`}
             >
               {renderCollectionIcon(assignedCollections[0].icon, 'w-2.5 h-2.5 shrink-0 stroke-[3]')}
               <span className="truncate">{assignedCollections[0].name}</span>
@@ -332,17 +324,19 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
               type="button"
               onClick={(e) => handleTagClick(e, bookmark.tags![0])}
               title={`Filter by tag #${bookmark.tags[0]}`}
-              className="text-[10px] font-black text-black bg-amber-200 hover:bg-amber-300 hover:scale-105 border border-black dark:border-white/40 px-1.5 py-0.5 rounded-md truncate max-w-[85px] sm:max-w-[100px] shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all text-left"
+              className="h-5.5 text-[10px] font-black text-black bg-amber-200 hover:bg-amber-300 border border-black dark:border-white/40 px-1.5 rounded-md truncate max-w-[90px] sm:max-w-[110px] shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] active:translate-x-0.5 active:translate-y-0.5 transition-all text-left flex items-center cursor-pointer shrink-0"
             >
               #{bookmark.tags[0]}
             </button>
           ) : (
-            <span className="text-[10px] font-bold text-slate-500 dark:text-neutral-400">Launch</span>
+            <span className="text-[10px] font-bold text-slate-400 dark:text-neutral-500 font-mono">
+              Direct
+            </span>
           )}
         </div>
 
-        <div className="w-6 h-6 rounded-md bg-black dark:bg-white text-white dark:text-black group-hover:bg-indigo-600 dark:group-hover:bg-amber-400 flex items-center justify-center transition-colors shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] shrink-0">
-          <ArrowUpRight className="w-3.5 h-3.5 stroke-[3]" />
+        <div className="w-5.5 h-5.5 rounded-md bg-slate-100 dark:bg-neutral-800 group-hover:bg-indigo-600 group-hover:text-white dark:group-hover:bg-amber-300 dark:group-hover:text-black border border-black dark:border-white/30 flex items-center justify-center text-slate-700 dark:text-neutral-300 shadow-[1px_1px_0px_0px_#000] dark:shadow-[1px_1px_0px_0px_#FFF] transition-colors shrink-0 ml-1">
+          <ArrowUpRight className="w-3.5 h-3.5 stroke-[2.5]" />
         </div>
       </div>
     </article>

@@ -65,8 +65,29 @@ export default function App() {
   const [editingCollection, setEditingCollection] = useState<CustomCollection | null>(null);
   const [isPackagingModalOpen, setIsPackagingModalOpen] = useState<boolean>(false);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Capture PWA install prompt
+  useEffect(() => {
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleTriggerPwaInstall = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      showToast('success', 'Bookmark Launcher installed to desktop!');
+      setDeferredPrompt(null);
+    }
+  };
 
   // Global keyboard shortcuts (Ctrl+N for Add, Esc handled in modals)
   useEffect(() => {
@@ -231,7 +252,7 @@ export default function App() {
         onToggleTheme={toggleTheme}
       />
 
-      <div className="flex-1 flex flex-row">
+      <div className="flex-1 flex w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Sidebar (Desktop docked + Mobile slide-out drawer) */}
         <Sidebar
           activeFilter={activeFilter}
@@ -269,8 +290,8 @@ export default function App() {
           onToggleTheme={toggleTheme}
         />
 
-        {/* Main Content Area */}
-        <main className="flex-1 md:ml-[260px] p-4 sm:p-6 md:p-8 lg:p-10 mb-20 md:mb-8 max-w-7xl mx-auto w-full">
+        {/* Main Content Area - Perfectly aligned with Header */}
+        <main className="flex-1 min-w-0 py-6 md:pl-8 pb-20 md:pb-12">
           {/* Header & Search Zone */}
           <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -529,6 +550,8 @@ export default function App() {
         isOpen={isPackagingModalOpen}
         onClose={() => setIsPackagingModalOpen(false)}
         onExportBackup={exportData}
+        deferredPrompt={deferredPrompt}
+        onTriggerPwaInstall={handleTriggerPwaInstall}
       />
 
       {/* Toast Notifications */}
