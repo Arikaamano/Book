@@ -130,7 +130,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       aria-label={`Launch ${bookmark.name} (${bookmark.domain})`}
     >
       {/* Top Bar inside Card - Symmetrical Buttons */}
-      <div className="w-full flex items-center justify-between z-20 h-7 shrink-0">
+      <div className="w-full flex items-center justify-between relative z-10 h-7 shrink-0">
         {/* Left: Options Context Menu */}
         <div className="relative" ref={menuRef}>
           <button

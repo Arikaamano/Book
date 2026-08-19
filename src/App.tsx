@@ -292,8 +292,8 @@ export default function App() {
 
         {/* Main Content Area - Full fluid desktop width */}
         <main className="flex-1 min-w-0 py-6 md:pl-8 lg:pl-10 pb-20 md:pb-12">
-          {/* Header & Search Zone */}
-          <div className="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
+          {/* Header & Search Zone - High z-index to float over grid */}
+          <div className="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 relative z-30">
             <div className="shrink-0">
               <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tight">
                 {activeFilter === 'favorites' ? (

@@ -67,9 +67,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const currentEngineObj = SEARCH_ENGINES.find((e) => e.id === selectedEngine) || SEARCH_ENGINES[0];
 
   return (
-    <div className="w-full flex items-center gap-2 sm:gap-2.5 relative z-20" ref={dropdownRef}>
-      {/* Search Engine Selector Dropdown Pill (Positioned outside overflow-hidden) */}
-      <div className="relative shrink-0">
+    <div className="w-full flex items-center gap-2 sm:gap-2.5 relative z-40" ref={dropdownRef}>
+      {/* Search Engine Selector Dropdown Pill */}
+      <div className="relative shrink-0 z-50">
         <button
           type="button"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -87,10 +87,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           />
         </button>
 
-        {/* Floating Dropdown Menu */}
+        {/* Floating Dropdown Menu with solid opaque background and highest z-index */}
         {isDropdownOpen && (
           <div
-            className="absolute left-0 top-full mt-2 w-52 bg-white dark:bg-neutral-900 border-2 border-black dark:border-white/40 rounded-2xl shadow-[5px_5px_0px_0px_#000] dark:shadow-[5px_5px_0px_0px_#FFF] z-50 py-1.5 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+            className="absolute left-0 top-full mt-2 w-56 bg-white dark:bg-neutral-900 border-2 border-black dark:border-white/40 rounded-2xl shadow-[6px_6px_0px_0px_#000] dark:shadow-[6px_6px_0px_0px_#FFF] z-50 py-1.5 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
             role="menu"
           >
             <div className="px-3.5 py-1.5 text-[10px] font-black text-slate-500 dark:text-neutral-400 uppercase tracking-wider border-b border-black/10 dark:border-white/10">
