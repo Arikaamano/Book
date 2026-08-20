@@ -2,6 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html,
+body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 @layer utilities {
   /* Hide scrollbar for clean horizontal chip swiping on mobile */
   .no-scrollbar::-webkit-scrollbar {

@@ -222,7 +222,7 @@ export default function App() {
   const activeColColor = activeCollection ? getCollectionColor(activeCollection.color) : null;
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#121212] text-black dark:text-white flex flex-col antialiased selection:bg-amber-300 dark:selection:bg-amber-400 selection:text-black transition-colors">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#FAF8F5] dark:bg-[#121212] text-black dark:text-white flex flex-col antialiased selection:bg-amber-300 dark:selection:bg-amber-400 selection:text-black transition-colors">
       {/* Hidden File Input for Import */}
       <input
         ref={fileInputRef}
@@ -252,7 +252,7 @@ export default function App() {
         onToggleTheme={toggleTheme}
       />
 
-      <div className="flex-1 flex w-full px-4 sm:px-6 lg:px-8">
+      <div className="flex-1 flex w-full max-w-full overflow-x-hidden px-3 sm:px-6 lg:px-8">
         {/* Sidebar (Desktop docked + Mobile slide-out drawer) */}
         <Sidebar
           activeFilter={activeFilter}
@@ -291,47 +291,47 @@ export default function App() {
         />
 
         {/* Main Content Area - Full fluid desktop width */}
-        <main className="flex-1 min-w-0 py-6 md:pl-8 lg:pl-10 pb-20 md:pb-12">
+        <main className="flex-1 min-w-0 w-full max-w-full overflow-x-hidden py-4 sm:py-6 md:pl-8 lg:pl-10 pb-24 md:pb-12">
           {/* Header & Search Zone - High z-index to float over grid */}
-          <div className="mb-6 sm:mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6 relative z-30">
-            <div className="shrink-0">
-              <h2 className="text-xl sm:text-2xl font-black text-black dark:text-white tracking-tight">
+          <div className="mb-4 sm:mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-6 relative z-30 w-full max-w-full">
+            <div className="shrink-0 min-w-0">
+              <h2 className="text-lg sm:text-2xl font-black text-black dark:text-white tracking-tight truncate">
                 {activeFilter === 'favorites' ? (
                   <span className="flex items-center gap-2">
-                    <Heart className="w-6 h-6 fill-rose-500 text-rose-500 stroke-[2.5]" />
+                    <Heart className="w-5 h-5 sm:w-6 sm:h-6 fill-rose-500 text-rose-500 stroke-[2.5]" />
                     <span>Favorite Websites</span>
                   </span>
                 ) : activeFilter === 'collection' && activeCollection ? (
                   <span className="flex items-center gap-2">
                     <span
-                      className={`w-7 h-7 rounded-lg ${activeColColor?.badgeBg} border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_0px_#000]`}
+                      className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg ${activeColColor?.badgeBg} border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_0px_#000]`}
                     >
-                      {renderCollectionIcon(activeCollection.icon, 'w-4 h-4 text-black stroke-[2.5]')}
+                      {renderCollectionIcon(activeCollection.icon, 'w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]')}
                     </span>
-                    <span>{activeCollection.name}</span>
+                    <span className="truncate">{activeCollection.name}</span>
                   </span>
                 ) : selectedTag ? (
                   <span className="flex items-center gap-2">
-                    <Layers className="w-6 h-6 text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />
-                    <span>Category: #{selectedTag}</span>
+                    <Layers className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600 dark:text-indigo-400 stroke-[2.5]" />
+                    <span className="truncate">Category: #{selectedTag}</span>
                   </span>
                 ) : (
                   <span>All Bookmarks &amp; Launcher</span>
                 )}
               </h2>
-              <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-neutral-400 mt-1">
+              <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-neutral-400 mt-0.5 sm:mt-1 truncate">
                 {activeFilter === 'favorites'
                   ? 'Your quick-access pinned websites and favorite tools.'
                   : activeFilter === 'collection' && activeCollection
                   ? activeCollection.description || `Custom list with ${filteredBookmarks.length} websites saved.`
                   : selectedTag
                   ? `Showing websites filtered under #${selectedTag}`
-                  : 'Search saved apps, discover new websites, or launch web queries instantly.'}
+                  : 'Search saved apps, discover new websites, or launch web queries.'}
               </p>
             </div>
 
             {/* Fluid Omni Search Bar */}
-            <div className="w-full lg:max-w-xl xl:max-w-2xl">
+            <div className="w-full max-w-full lg:max-w-xl xl:max-w-2xl min-w-0">
               <SearchBar
                 value={searchQuery}
                 onChange={setSearchQuery}
